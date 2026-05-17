@@ -1,0 +1,45 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Build/export folders
+build/
+dist/
+exports/
+release/
+
+# Temporary/cache files
+.cache/
+tmp/
+temp/
+
+# Godot
+.godot/
+.import/
+*.translation
+
+# Godot export presets may contain sensitive paths/keys
+export_presets.cfg
+
+# Python tools/scripts
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node tools, if used later
+node_modules/
+
+# Large/generated media
+*.mp4
+*.mov
+*.avi
+*.zip
+*.tar.gz
