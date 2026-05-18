@@ -19,15 +19,23 @@ class Player {
         this.velocity={
             x:0,
             y:0        }
-        this.width = 30
-        this.height = 30
+        this.width = 60
+        this.height = 60
 
         this.baseY= this.position.y;
         this.frame=0;
+
+        this.image = new Image()
+        this.image.src='Bee.png'
     }
     draw() {
-        c.fillStyle= 'yellow'
-        c.fillRect(this.position.x, this.position.y,this.width, this.height)
+        c.drawImage(
+            this.image,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        )
     }
 
     update() {
