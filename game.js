@@ -1,148 +1,161 @@
 
 const canvas = document.querySelector('canvas');
-
 const c = canvas.getContext('2d');
 
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-console.log(canvas);
 
-const startY = canvas.height/2
+const keys = {
+  ArrowUp: false,
+  ArrowDown: false,
+  ArrowLeft: false,
+  ArrowRight: false
+};
 
 class Player {
-    constructor() {
-        this.position ={
-            x: 100,
-            y: canvas.height/2 
-        }
-        this.velocity={
-            x:0,
-            y:0        }
-        this.width = 90
-        this.height = 110
+  constructor() {
+    this.width = 90;
+    this.height = 110;
 
-        this.baseY= this.position.y;
-        this.frame=0;
+    this.position = {
+      x: 100,
+      y: canvas.height / 2 - this.height / 2
+    };
 
-        this.images = [] 
-        
-        const bee1 = new Image()
-        bee1.src= 'bee_1.PNG'
+    this.velocity = {
+      x: 0,
+      y: 0
+    };
 
-        const bee2 = new Image()
-        bee2.src= 'bee_2.PNG'
+    
+    this.baseY = this.position.y;
 
-        const bee3 = new Image()
-        bee3.src= 'bee_3.PNG'
+    
+    this.frame = 0;
 
-        const bee4 = new Image()
-        bee4.src= 'bee_4.PNG'
+    
+    this.images = [];
 
-        this.images.push(bee1,bee2,bee3,bee4)
+    const bee1 = new Image();
+    bee1.src = 'bee_1.PNG';
 
-        this.currentImage=0
+    const bee2 = new Image();
+    bee2.src = 'bee_2.PNG';
+
+    const bee3 = new Image();
+    bee3.src = 'bee_3.PNG';
+
+    const bee4 = new Image();
+    bee4.src = 'bee_4.PNG';
+
+    this.images.push(bee1, bee2, bee3, bee4);
+
+    this.currentImage = 0;
+  }
+
+  draw() {
+    const currentBeeImage = this.images[this.currentImage];
+
+    c.drawImage(
+      currentBeeImage,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
+  }
+
+  update() {
+    this.frame++;
+
+    
+    const speedX = 2;
+    const speedY = 4;
+
+    
+    
+    this.velocity.x = 0;
+    this.velocity.y = 0;
+
+    if (keys.ArrowLeft) {
+      this.velocity.x = -speedX;
     }
-    draw() {
-        c.drawImage(
-            this.images[this.currentImage],
-            this.position.x,
-            this.position.y,
-            this.width,
-            this.height
-        )
+
+    if (keys.ArrowRight) {
+      this.velocity.x = speedX;
     }
 
-    update() {
+    if (keys.ArrowUp) {
+      this.velocity.y = -speedY;
+    }
 
-     this.frame++;
+    if (keys.ArrowDown) {
+      this.velocity.y = speedY;
+    }
 
-     this.baseY += this.velocity.y;
-     this.velocity.y *= 0.9;
+    
+    this.position.x += this.velocity.x;
+    this.baseY += this.velocity.y;
 
-     this.position.y = this.baseY + Math.sin(this.frame * 0.05) * 10;
-     this.position.x += this.velocity.x;
+    
+    this.position.y = this.baseY + Math.sin(this.frame * 0.05) * 10;
 
-     if (this.frame % 8 === 0) {
-         this.currentImage++;
+    
+    if (this.frame % 8 === 0) {
+      this.currentImage++;
 
-         if (this.currentImage >= this.images.length) {
-             this.currentImage = 0;
-         }
-        }
+      if (this.currentImage >= this.images.length) {
+        this.currentImage = 0;
+      }
+    }
 
-     if (this.position.y < 0) {
-         this.position.y = 0;
-         this.baseY = 0;
-         this.velocity.y = 0;
-        }
+    
+    if (this.position.y < 0) {
+      this.position.y = 0;
+      this.baseY = 0;
+    }
 
-     if (this.position.y + this.height > canvas.height) {
-         this.position.y = canvas.height - this.height;
-         this.baseY = canvas.height - this.height;
-         this.velocity.y = 0;
-        }
+    
+    if (this.position.y + this.height > canvas.height) {
+      this.position.y = canvas.height - this.height;
+      this.baseY = canvas.height - this.height;
+    }
 
-     if (this.position.x < 0) {
-         this.position.x = 0;
-         this.velocity.x = 0;
-        } 
+    
+    if (this.position.x < 0) {
+      this.position.x = 0;
+    }
 
-     if (this.position.x + this.width > canvas.width / 2) {
-         this.position.x = canvas.width / 2 - this.width;
-         this.velocity.x = 0;
-        } 
+    
+    if (this.position.x + this.width > canvas.width / 2) {
+      this.position.x = canvas.width / 2 - this.width;
+    }
 
-     this.draw();
+    this.draw();
+  }
 }
-}
 
-const player= new Player()
-player.update()
+const player = new Player();
 
 function animate() {
-    requestAnimationFrame(animate)
-    c.clearRect(0,0, canvas.width, canvas.height)
-    player.update()
+  requestAnimationFrame(animate);
+
+  c.clearRect(0, 0, canvas.width, canvas.height);
+
+  player.update();
 }
 
-animate()
+animate();
 
 addEventListener('keydown', (event) => {
-    switch (event.code) {
-        case 'ArrowDown': 
-          console.log('down')
-          player.velocity.y = 2
-          break
-    
-        case 'ArrowUp': 
-          console.log('up')
-          player.velocity.y = -2
-          break
-        case 'ArrowLeft': 
-          console.log('left')
-          player.velocity.x = -2
-          break
-        case 'ArrowRight': 
-         console.log('Right')
-         player.velocity.x = 2
-         break
-    }
-
-})
+  if (event.code in keys) {
+    keys[event.code] = true;
+  }
+});
 
 addEventListener('keyup', (event) => {
-    switch (event.code) {
-        case 'ArrowDown': 
-        case 'ArrowUp': 
-          console.log('up')
-          player.velocity.y = 0
-          break
-        case 'ArrowLeft': 
-        case 'ArrowRight': 
-         console.log('Right')
-         player.velocity.x =0
-         break
-    }
-
-})
+  if (event.code in keys) {
+    keys[event.code] = false;
+  }
+});
