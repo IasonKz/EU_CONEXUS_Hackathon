@@ -37,8 +37,8 @@ const keys = {
 
 class Player {
   constructor() {
-    this.width = 90;
-    this.height = 110;
+    this.width = 110;
+    this.height = 150;
 
     this.position = {
       x: 100,
