@@ -5,6 +5,28 @@ const c = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+const backgroundImage = new Image();
+backgroundImage.src = 'background .png';
+
+let backgroundX = 0;
+const backgroundSpeed = 1;
+
+function drawBackground() {
+  
+  if (keys.ArrowRight) {
+    backgroundX -= backgroundSpeed;
+  }
+
+  if (keys.ArrowLeft) {
+    backgroundX += backgroundSpeed;
+  }
+
+  c.drawImage(backgroundImage, backgroundX, 0, canvas.width, canvas.height);
+  c.drawImage(backgroundImage, backgroundX + canvas.width, 0, canvas.width, canvas.height);
+
+}
+
+
 
 const keys = {
   ArrowUp: false,
@@ -143,6 +165,8 @@ function animate() {
 
   c.clearRect(0, 0, canvas.width, canvas.height);
 
+  drawBackground();
+
   player.update();
 }
 
@@ -150,12 +174,14 @@ animate();
 
 addEventListener('keydown', (event) => {
   if (event.code in keys) {
+    event.preventDefault();
     keys[event.code] = true;
   }
 });
 
 addEventListener('keyup', (event) => {
   if (event.code in keys) {
+    event.preventDefault();
     keys[event.code] = false;
   }
 });
