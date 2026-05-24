@@ -19,18 +19,33 @@ class Player {
         this.velocity={
             x:0,
             y:0        }
-        this.width = 60
-        this.height = 60
+        this.width = 90
+        this.height = 110
 
         this.baseY= this.position.y;
         this.frame=0;
 
-        this.image = new Image()
-        this.image.src='Bee.png'
+        this.images = [] 
+        
+        const bee1 = new Image()
+        bee1.src= 'bee_1.PNG'
+
+        const bee2 = new Image()
+        bee2.src= 'bee_2.PNG'
+
+        const bee3 = new Image()
+        bee3.src= 'bee_3.PNG'
+
+        const bee4 = new Image()
+        bee4.src= 'bee_4.PNG'
+
+        this.images.push(bee1,bee2,bee3,bee4)
+
+        this.currentImage=0
     }
     draw() {
         c.drawImage(
-            this.image,
+            this.images[this.currentImage],
             this.position.x,
             this.position.y,
             this.width,
@@ -39,35 +54,47 @@ class Player {
     }
 
     update() {
-        this.frame++;
-        this.baseY+= this.velocity.y;
-        this.velocity.y *=0.9;
-        this.position.y=this.baseY + Math.sin(this.frame * 0.05) * 10;
-        this.position.x +=this.velocity.x
-        this.draw()
 
-        if (this.position.y<0) {
-            this.position.y=0;
-            this.baseY=0;
-            this.velocity.y=0;
-        }
-        
-        if(this.position.y + this.height > canvas.height) {
-            this.position.y =canvas.height-this.height;
-            this.baseY= canvas.height-this.height;
-            this.velocity.y=0;
+     this.frame++;
+
+     this.baseY += this.velocity.y;
+     this.velocity.y *= 0.9;
+
+     this.position.y = this.baseY + Math.sin(this.frame * 0.05) * 10;
+     this.position.x += this.velocity.x;
+
+     if (this.frame % 8 === 0) {
+         this.currentImage++;
+
+         if (this.currentImage >= this.images.length) {
+             this.currentImage = 0;
+         }
         }
 
-        if (this.position.x<0){
-            this.position.x=0;
+     if (this.position.y < 0) {
+         this.position.y = 0;
+         this.baseY = 0;
+         this.velocity.y = 0;
         }
 
-        if(this.position.x > canvas.width/2){
-            this.position.x= canvas.width/2 -this.width
+     if (this.position.y + this.height > canvas.height) {
+         this.position.y = canvas.height - this.height;
+         this.baseY = canvas.height - this.height;
+         this.velocity.y = 0;
         }
 
-        
-    }
+     if (this.position.x < 0) {
+         this.position.x = 0;
+         this.velocity.x = 0;
+        } 
+
+     if (this.position.x + this.width > canvas.width / 2) {
+         this.position.x = canvas.width / 2 - this.width;
+         this.velocity.x = 0;
+        } 
+
+     this.draw();
+}
 }
 
 const player= new Player()
