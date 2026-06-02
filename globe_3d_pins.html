@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>3D Υδρόγειος με πινέζες</title>
   <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
     html, body {
       margin: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #eecb59;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: "VT323", monospace;
+      font-weight: 400;
+      font-style: normal;
     }
 
     #info {
@@ -19,11 +24,11 @@
       left: 16px;
       top: 16px;
       color: #fff;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(0, 0, 0, 0);
+      border: 0px solid rgba(255, 255, 255, 0.16);
       border-radius: 12px;
       padding: 10px 12px;
-      font-size: 14px;
+      font-size: 30px;
       line-height: 1.35;
       user-select: none;
       backdrop-filter: blur(6px);
@@ -113,7 +118,7 @@
 <body>
   <div id="info">
     <strong>apiconIASIS</strong>
-    Σύρε με το ποντίκι για περιστροφή · scroll για zoom
+    Help us save the bees!
   </div>
 
   <div id="bottomButtons">
@@ -189,7 +194,7 @@
    {
     lat: 40.7128,
     lon: -74.0060,
-    name: 'Νέα Υόρκη',
+    name: 'America',
     description: 'Level 1',
     level: 'levels/level1.html'
    },
@@ -197,23 +202,23 @@
    {
     lat: 51.5074,
     lon: -0.1278,
-    name: 'Λονδίνο',
+    name: 'tba',
     description: 'Περιγραφή για το επίπεδο 2',
     level: 'levels/level2.html'
    },
 
    {
-    lat: 37.9838,
-    lon: 23.7275,
-    name: 'Αθήνα',
+    lat: 30.1109,
+    lon: 30.6821,
+    name: 'Europe',
     description: 'Περιγραφή για το επίπεδο 3',
     level: 'levels/level3.html'
    },
 
    {
-    lat: 35.6762,
-    lon: 139.6503,
-    name: 'Τόκιο',
+    lat: 25.6762,
+    lon: 80.6503,
+    name: 'Himalaya',
     description: 'Περιγραφή για το επίπεδο 4',
     level: 'levels/level4.html'
    }
@@ -436,7 +441,7 @@
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.font = 'bold 42px Arial';
+  ctx.font = 'bold 42px "VT323"';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
