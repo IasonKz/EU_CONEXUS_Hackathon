@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cube Adventure</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: Arial, sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      font-size: 24px;
+      z-index: 10;
+    }
+
+    #winScreen {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      font-size: 32px;
+      z-index: 20;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 14px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="hud">
+  <div id="level">Level: 1</div>
+  <div id="score">Coins: 0</div>
+</div>
+
+<div id="winScreen">
+  <div>LEVEL COMPLETE!</div>
+
+  <button onclick="nextLevel()">
+    NEXT LEVEL
+  </button>
+
+  <button onclick="restartLevel()">
+    RESTART
+  </button>
+</div>
+
+<canvas id="game"></canvas>
+
+<script src="game.js"></script>
+</body>
+</html>

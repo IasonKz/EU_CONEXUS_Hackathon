@@ -1,283 +1,359 @@
-const canvas = document.querySelector('canvas');
-const c = canvas.getContext('2d');
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let gameState = 'start';
+/* =======================
+   GAME STATE
+======================= */
+let gameWon = false;
+let score = 0;
+let currentLevel = 0;
 
-const backgroundImage = new Image();
-backgroundImage.src = 'background .png';
+/* =======================
+   CAMERA
+======================= */
+const camera = { x: 0 };
 
-const startBackgroundImage = new Image();
-startBackgroundImage.src = 'starting_bg.JPG';
-
-const logoImage = new Image();
-logoImage.src = 'logo.PNG';
-
-let backgroundX = 0;
-const backgroundSpeed = 1;
-
-const keys = {
-  ArrowUp: false,
-  ArrowDown: false,
-  ArrowLeft: false,
-  ArrowRight: false
+/* =======================
+   PLAYER
+======================= */
+const player = {
+  x: 100,
+  y: 300,
+  width: 40,
+  height: 40,
+  dx: 0,
+  dy: 0,
+  speed: 5,
+  jumpPower: -12,
+  grounded: false
 };
 
-function drawCoverImage(image, x, y, width, height) {
-  if (!image.complete || image.naturalWidth === 0) return;
+const gravity = 0.6;
 
-  const imageRatio = image.width / image.height;
-  const canvasRatio = width / height;
+/* =======================
+   CLOUDS
+======================= */
+const clouds = [
+  { x: 200, y: 90, speed: 0.15 },
+  { x: 700, y: 130, speed: 0.2 },
+  { x: 1200, y: 80, speed: 0.1 },
+  { x: 1600, y: 110, speed: 0.18 }
+];
 
-  let drawWidth;
-  let drawHeight;
-  let drawX;
-  let drawY;
+/* =======================
+   LEVELS
+======================= */
+const levels = [
+  {
+    groundY: 550,
 
-  if (imageRatio > canvasRatio) {
-    drawHeight = height;
-    drawWidth = height * imageRatio;
-    drawX = x - (drawWidth - width) / 2;
-    drawY = y;
-  } else {
-    drawWidth = width;
-    drawHeight = width / imageRatio;
-    drawX = x;
-    drawY = y - (drawHeight - height) / 2;
+    platforms: [
+      { x: 300, y: 470, width: 160, height: 20 },
+      { x: 600, y: 430, width: 160, height: 20 },
+      { x: 900, y: 390, width: 160, height: 20 }
+    ],
+
+    coins: [
+      { x: 330, y: 440, size: 12, collected: false },
+      { x: 630, y: 400, size: 12, collected: false },
+      { x: 930, y: 360, size: 12, collected: false }
+    ],
+
+    enemies: [
+      { x: 500, y: 520, width: 30, height: 30, dir: 1 }
+    ],
+
+    flag: { x: 1200, y: 480, width: 20, height: 70 }
+  },
+
+  {
+    groundY: 550,
+
+    platforms: [
+      { x: 250, y: 470, width: 140, height: 20 },
+      { x: 500, y: 430, width: 140, height: 20 },
+      { x: 750, y: 390, width: 140, height: 20 },
+      { x: 1000, y: 350, width: 140, height: 20 },
+      { x: 1250, y: 310, width: 140, height: 20 }
+    ],
+
+    coins: [
+      { x: 280, y: 440, size: 12, collected: false },
+      { x: 530, y: 400, size: 12, collected: false },
+      { x: 780, y: 360, size: 12, collected: false },
+      { x: 1030, y: 320, size: 12, collected: false }
+    ],
+
+    enemies: [
+      { x: 600, y: 520, width: 30, height: 30, dir: 1 },
+      { x: 1100, y: 520, width: 30, height: 30, dir: -1 }
+    ],
+
+    flag: { x: 1400, y: 480, width: 20, height: 70 }
   }
+];
 
-  c.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+/* =======================
+   WORLD
+======================= */
+let platforms = [];
+let coins = [];
+let enemies = [];
+let flag = {};
+let groundY = 550;
+
+/* full ground rectangle (IMPORTANT FIX) */
+const ground = {
+  x: -1000,
+  y: 550,
+  width: 6000,
+  height: 200
+};
+
+/* =======================
+   LOAD LEVEL (SAFE RESET)
+======================= */
+function loadLevel(index) {
+  const level = levels[index];
+
+  platforms = level.platforms.map(p => ({ ...p }));
+  coins = level.coins.map(c => ({ ...c, collected: false }));
+  enemies = level.enemies.map(e => ({ ...e }));
+  flag = { ...level.flag };
+
+  ground.y = level.groundY;
+  groundY = level.groundY;
+
+  player.x = 100;
+  player.y = 300;
+  player.dx = 0;
+  player.dy = 0;
+
+  camera.x = 0;
+  gameWon = false;
+
+  document.getElementById("level").innerText = "Level: " + (index + 1);
+  document.getElementById("score").innerText = "Coins: " + score;
+  document.getElementById("winScreen").style.display = "none";
 }
 
-function drawBackground() {
-  if (keys.ArrowRight) {
-    backgroundX -= backgroundSpeed;
+loadLevel(currentLevel);
+
+/* =======================
+   INPUT
+======================= */
+const keys = {};
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
+
+/* =======================
+   UPDATE
+======================= */
+function update() {
+  if (gameWon) return;
+
+  // movement
+  if (keys["ArrowRight"]) player.dx = player.speed;
+  else if (keys["ArrowLeft"]) player.dx = -player.speed;
+  else player.dx = 0;
+
+  if (keys[" "] && player.grounded) {
+    player.dy = player.jumpPower;
+    player.grounded = false;
   }
 
-  if (keys.ArrowLeft) {
-    backgroundX += backgroundSpeed;
+  player.dy += gravity;
+
+  player.x += player.dx;
+  player.y += player.dy;
+
+  camera.x = player.x - 200;
+
+  player.grounded = false;
+
+  /* =======================
+     🔥 STRONG GROUND COLLISION (FIX)
+  ======================= */
+  const playerBottom = player.y + player.height;
+
+  if (
+    player.x < ground.x + ground.width &&
+    player.x + player.width > ground.x &&
+    playerBottom >= ground.y &&
+    playerBottom - player.dy <= ground.y
+  ) {
+    player.y = ground.y - player.height;
+    player.dy = 0;
+    player.grounded = true;
   }
 
-  if (backgroundX <= -canvas.width) {
-    backgroundX = 0;
+  /* =======================
+     PLATFORM COLLISION (FIXED)
+  ======================= */
+  for (let p of platforms) {
+
+    const playerBottom = player.y + player.height;
+    const playerTop = player.y;
+
+    const isOverlapping =
+      player.x + player.width > p.x &&
+      player.x < p.x + p.width &&
+      playerBottom >= p.y &&
+      playerTop < p.y + p.height;
+
+    const wasAbove = playerBottom - player.dy <= p.y;
+
+    if (isOverlapping && player.dy >= 0 && wasAbove) {
+      player.y = p.y - player.height;
+      player.dy = 0;
+      player.grounded = true;
+    }
   }
 
-  if (backgroundX > 0) {
-    backgroundX = -canvas.width;
+  /* =======================
+     COINS
+  ======================= */
+  for (let c of coins) {
+    if (!c.collected &&
+      player.x < c.x + c.size &&
+      player.x + player.width > c.x &&
+      player.y < c.y + c.size &&
+      player.y + player.height > c.y
+    ) {
+      c.collected = true;
+      score++;
+      document.getElementById("score").innerText = "Coins: " + score;
+    }
   }
 
-  c.drawImage(backgroundImage, backgroundX, 0, canvas.width, canvas.height);
-  c.drawImage(backgroundImage, backgroundX + canvas.width, 0, canvas.width, canvas.height);
-}
+  /* =======================
+     ENEMIES
+  ======================= */
+  for (let e of enemies) {
+    e.x += e.dir * 2;
 
-class Player {
-  constructor() {
-    this.width = 110;
-    this.height = 150;
+    if (e.x < 400 || e.x > 1600) e.dir *= -1;
 
-    this.position = {
-      x: 100,
-      y: canvas.height / 2 - this.height / 2
-    };
-
-    this.velocity = {
-      x: 0,
-      y: 0
-    };
-
-    this.baseY = this.position.y;
-    this.frame = 0;
-
-    this.images = [];
-
-    const bee1 = new Image();
-    bee1.src = 'bee_1.PNG';
-
-    const bee2 = new Image();
-    bee2.src = 'bee_2.PNG';
-
-    const bee3 = new Image();
-    bee3.src = 'bee_3.PNG';
-
-    const bee4 = new Image();
-    bee4.src = 'bee_4.PNG';
-
-    this.images.push(bee1, bee2, bee3, bee4);
-
-    this.currentImage = 0;
+    if (
+      player.x < e.x + e.width &&
+      player.x + player.width > e.x &&
+      player.y < e.y + e.height &&
+      player.y + player.height > e.y
+    ) {
+      player.x = 100;
+      player.y = 300;
+    }
   }
 
-  draw() {
-    const currentBeeImage = this.images[this.currentImage];
-
-    c.drawImage(
-      currentBeeImage,
-      this.position.x,
-      this.position.y,
-      this.width,
-      this.height
-    );
-  }
-
-  update() {
-    this.frame++;
-
-    const speedX = 2;
-    const speedY = 4;
-
-    this.velocity.x = 0;
-    this.velocity.y = 0;
-
-    if (keys.ArrowLeft) {
-      this.velocity.x = -speedX;
-    }
-
-    if (keys.ArrowRight) {
-      this.velocity.x = speedX;
-    }
-
-    if (keys.ArrowUp) {
-      this.velocity.y = -speedY;
-    }
-
-    if (keys.ArrowDown) {
-      this.velocity.y = speedY;
-    }
-
-    this.position.x += this.velocity.x;
-    this.baseY += this.velocity.y;
-
-    this.position.y = this.baseY + Math.sin(this.frame * 0.05) * 10;
-
-    if (this.frame % 8 === 0) {
-      this.currentImage++;
-
-      if (this.currentImage >= this.images.length) {
-        this.currentImage = 0;
-      }
-    }
-
-    if (this.position.y < 0) {
-      this.position.y = 0;
-      this.baseY = 0;
-    }
-
-    if (this.position.y + this.height > canvas.height) {
-      this.position.y = canvas.height - this.height;
-      this.baseY = canvas.height - this.height;
-    }
-
-    if (this.position.x < 0) {
-      this.position.x = 0;
-    }
-
-    if (this.position.x + this.width > canvas.width / 2) {
-      this.position.x = canvas.width / 2 - this.width;
-    }
-
-    this.draw();
+  /* =======================
+     WIN CONDITION
+  ======================= */
+  if (
+    player.x < flag.x + flag.width &&
+    player.x + player.width > flag.x &&
+    player.y < flag.y + flag.height &&
+    player.y + player.height > flag.y
+  ) {
+    gameWon = true;
+    document.getElementById("winScreen").style.display = "flex";
   }
 }
 
-const player = new Player();
+/* =======================
+   DRAW
+======================= */
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-function drawStartScreen() {
-  drawCoverImage(startBackgroundImage, 0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(-camera.x, 0);
 
-  c.textAlign = 'center';
+  /* SKY */
+  ctx.fillStyle = "#87CEEB";
+  ctx.fillRect(camera.x, 0, canvas.width * 5, canvas.height);
 
-  const logoWidth = 500;
-  const logoHeight = 500 * (1600 / 1277);
+  /* CLOUDS */
+  ctx.fillStyle = "white";
+  for (let c of clouds) {
+    c.x -= c.speed;
 
-  const logoX = canvas.width / 2 - logoWidth / 2;
-  const logoY = canvas.height / 2 - logoHeight / 2 - 180;
+    ctx.beginPath();
+    ctx.arc(c.x - camera.x * 0.3, c.y, 25, 0, Math.PI * 2);
+    ctx.arc(c.x + 25 - camera.x * 0.3, c.y + 10, 25, 0, Math.PI * 2);
+    ctx.arc(c.x + 50 - camera.x * 0.3, c.y, 25, 0, Math.PI * 2);
+    ctx.fill();
 
-  c.drawImage(
-    logoImage,
-    logoX,
-    logoY,
-    logoWidth,
-    logoHeight
-  );
+    if (c.x < -200) c.x = 2000;
+  }
 
-  c.fillStyle = '#06124a';
-  c.font = '22px "Courier New", monospace';
-  c.fillText(
-    '> USE ARROW KEYS TO MOVE',
-    canvas.width / 2,
-    canvas.height / 2 + 130
-  );
+  /* GROUND (VISIBLE + COLLISION SAME LINE) */
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(ground.x, ground.y, ground.width, ground.height);
 
-  const buttonX = canvas.width / 2 - 100;
-  const buttonY = canvas.height / 2 + 170;
-  const buttonWidth = 200;
-  const buttonHeight = 60;
+  /* PLATFORMS */
+  ctx.fillStyle = "#654321";
+  for (let p of platforms) {
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+  }
 
-  c.fillStyle = '#2f4f4f';
-  c.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+  /* COINS */
+  ctx.fillStyle = "gold";
+  for (let c of coins) {
+    if (!c.collected) {
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 
-  c.strokeStyle = '#06124a';
-  c.lineWidth = 3;
-  c.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+  /* ENEMIES */
+  ctx.fillStyle = "black";
+  for (let e of enemies) {
+    ctx.fillRect(e.x, e.y, e.width, e.height);
+  }
 
-  c.fillStyle = '#ffffff';
-  c.font = '28px "Courier New", monospace';
-  c.fillText('> START_', canvas.width / 2, buttonY + 40);
+  /* FLAG */
+  ctx.fillStyle = "red";
+  ctx.fillRect(flag.x, flag.y, flag.width, flag.height);
+
+  ctx.fillStyle = "white";
+  ctx.fillRect(flag.x + 5, flag.y, 10, 20);
+
+  /* PLAYER */
+  ctx.fillStyle = "red";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+
+  ctx.restore();
 }
 
-function animate() {
-  requestAnimationFrame(animate);
-
-  c.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (gameState === 'start') {
-    drawStartScreen();
-  }
-
-  if (gameState === 'playing') {
-    drawBackground();
-    player.update();
-  }
+/* =======================
+   LOOP
+======================= */
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
 }
 
-animate();
+loop();
 
-addEventListener('keydown', (event) => {
-  if (event.code in keys) {
-    event.preventDefault();
-    keys[event.code] = true;
+/* =======================
+   UI
+======================= */
+function nextLevel() {
+  currentLevel++;
+
+  if (currentLevel >= levels.length) {
+    currentLevel = 0;
+    score = 0;
   }
-});
 
-addEventListener('keyup', (event) => {
-  if (event.code in keys) {
-    event.preventDefault();
-    keys[event.code] = false;
-  }
-});
+  loadLevel(currentLevel);
+}
 
-canvas.addEventListener('click', (event) => {
-  if (gameState !== 'start') return;
-
-  const rect = canvas.getBoundingClientRect();
-
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
-
-  const buttonX = canvas.width / 2 - 100;
-  const buttonY = canvas.height / 2 + 170;
-  const buttonWidth = 200;
-  const buttonHeight = 60;
-
-  const clickedStartButton =
-    mouseX >= buttonX &&
-    mouseX <= buttonX + buttonWidth &&
-    mouseY >= buttonY &&
-    mouseY <= buttonY + buttonHeight;
-
-  if (clickedStartButton) {
-    gameState = 'playing';
-  }
-});
+function restartLevel() {
+  loadLevel(currentLevel);
+}
