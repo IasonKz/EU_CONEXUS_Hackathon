@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather | apiconIASIS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    :root{
+      --bg:#f6c177;
+      --panel:#fff8ea;
+      --panel-soft:#ffe7bd;
+      --text:#31424a;
+      --pink:#fe6db6;
+      --green:#55602a;
+      --blue:#9ed8f1;
+      --warning:#d71920;
+      --caution:#b55b00;
+      --safe:#277c43;
+      --line:#e6b464;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    html,
+    body{
+      margin:0;
+      min-height:100%;
+      background:var(--bg);
+      color:var(--text);
+      font-family:"VT323", monospace;
+      image-rendering:pixelated;
+    }
+
+    body{
+      padding:26px;
+      overflow:auto;
+    }
+
+    .weather-page{
+      max-width:1260px;
+      margin:0 auto;
+    }
+
+    .weather-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      margin-bottom:18px;
+    }
+
+    h1{
+      margin:0;
+      color:white;
+      font-size:50px;
+      line-height:1;
+      letter-spacing:1px;
+      text-shadow:3px 3px 0 var(--pink);
+    }
+
+    .subtitle{
+      margin:8px 0 0;
+      color:white;
+      font-size:28px;
+      line-height:1.1;
+      text-shadow:2px 2px 0 rgba(85,96,42,.5);
+    }
+
+    .header-actions{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:8px;
+      min-width:220px;
+    }
+
+    .refresh-button{
+      border:4px solid var(--green);
+      background:var(--panel);
+      color:var(--pink);
+      padding:8px 16px;
+      font:26px "VT323", monospace;
+      cursor:pointer;
+      box-shadow:5px 5px 0 rgba(85,96,42,.35);
+    }
+
+    .refresh-button:hover{
+      transform:translate(-1px,-1px);
+      box-shadow:6px 6px 0 rgba(85,96,42,.35);
+    }
+
+    .updated-at{
+      color:white;
+      font-size:22px;
+      text-align:right;
+      text-shadow:2px 2px 0 rgba(85,96,42,.5);
+    }
+
+    .weather-card{
+      background:rgba(255,248,234,.96);
+      border:5px solid var(--panel);
+      box-shadow:0 0 0 5px rgba(254,109,182,.35), 8px 8px 0 rgba(85,96,42,.35);
+      border-radius:8px;
+      padding:18px;
+    }
+
+    .table-wrap{
+      width:100%;
+      overflow:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width:980px;
+      font-size:25px;
+    }
+
+    th,
+    td{
+      padding:12px 10px;
+      border-bottom:3px solid var(--line);
+      vertical-align:middle;
+      text-align:left;
+    }
+
+    th{
+      position:sticky;
+      top:0;
+      z-index:1;
+      background:var(--panel-soft);
+      color:var(--green);
+      font-size:27px;
+      white-space:nowrap;
+    }
+
+    tr:last-child td{
+      border-bottom:0;
+    }
+
+    .bee-cell{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:210px;
+    }
+
+    .bee-img{
+      width:78px;
+      height:78px;
+      object-fit:contain;
+      flex:0 0 78px;
+      background:#d9eef7;
+      border:4px solid var(--green);
+      box-shadow:4px 4px 0 rgba(254,109,182,.45);
+    }
+
+    .level-name{
+      display:block;
+      color:var(--pink);
+      font-size:29px;
+      line-height:1;
+    }
+
+    .bee-name{
+      display:block;
+      color:var(--text);
+      font-size:23px;
+      line-height:1.05;
+    }
+
+    .location-name{
+      color:var(--green);
+      font-size:28px;
+      line-height:1;
+    }
+
+    .location-coords{
+      display:block;
+      color:#6f7780;
+      font-size:19px;
+      margin-top:3px;
+    }
+
+    .metric{
+      white-space:nowrap;
+      font-size:28px;
+    }
+
+    .weather-text{
+      display:block;
+      min-width:130px;
+      color:var(--text);
+      line-height:1.05;
+    }
+
+
+    .api-debug{
+      display:block;
+      margin-top:4px;
+      color:#6f7780;
+      font-size:18px;
+      line-height:1.05;
+      max-width:260px;
+      overflow-wrap:anywhere;
+    }
+
+    .source-badge{
+      display:inline-block;
+      margin-top:5px;
+      padding:2px 7px;
+      border:2px solid currentColor;
+      color:var(--green);
+      background:white;
+      font-size:18px;
+      line-height:1;
+    }
+
+    .status-pill{
+      display:inline-block;
+      padding:4px 10px;
+      margin-bottom:6px;
+      border:3px solid currentColor;
+      background:white;
+      font-size:24px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .status-safe{
+      color:var(--safe);
+    }
+
+    .status-caution{
+      color:var(--caution);
+    }
+
+    .status-danger{
+      color:var(--warning);
+      animation:blinkWarning 1.05s steps(2, start) infinite;
+    }
+
+    .status-message{
+      display:block;
+      max-width:270px;
+      font-size:23px;
+      line-height:1.05;
+    }
+
+    .status-message.danger{
+      color:var(--warning);
+      font-weight:bold;
+    }
+
+    .status-message.caution{
+      color:var(--caution);
+    }
+
+    .status-message.safe{
+      color:var(--safe);
+    }
+
+    .bee-reaction{
+      display:block;
+      max-width:270px;
+      margin-top:5px;
+      color:#4e5960;
+      font-size:21px;
+      line-height:1.05;
+    }
+
+    .loading-cell{
+      color:var(--pink);
+      font-size:27px;
+    }
+
+    .error-box{
+      display:none;
+      margin-top:14px;
+      padding:12px 14px;
+      border:4px solid var(--warning);
+      background:#fff3f3;
+      color:var(--warning);
+      font-size:25px;
+      line-height:1.1;
+    }
+
+    .small-note{
+      margin:14px 0 0;
+      color:#55602a;
+      font-size:21px;
+      line-height:1.1;
+    }
+
+    @keyframes blinkWarning{
+      0%,100%{ background:white; }
+      50%{ background:#ffe1e1; }
+    }
+
+    @media (max-width:740px){
+      body{
+        padding:18px;
+      }
+
+      .weather-header{
+        flex-direction:column;
+      }
+
+      .header-actions{
+        align-items:flex-start;
+      }
+
+      .updated-at{
+        text-align:left;
+      }
+
+      h1{
+        font-size:42px;
+      }
+
+      .subtitle{
+        font-size:24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="weather-page">
+    <header class="weather-header">
+      <div>
+        <h1>Weather Station</h1>
+        <p class="subtitle">Live weather για Αθήνα / Ιμαλάια / Τανζανία / Ουγκάντα</p>
+      </div>
+
+      <div class="header-actions">
+        <button id="refreshWeather" class="refresh-button" type="button">Refresh</button>
+        <div id="updatedAt" class="updated-at">Loading...</div>
+      </div>
+    </header>
+
+    <section class="weather-card" aria-label="Current weather for bee levels">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Bee / Level</th>
+              <th>Location</th>
+              <th>Weather</th>
+              <th>Temp</th>
+              <th>Humidity</th>
+              <th>Wind</th>
+              <th>Clouds</th>
+              <th>Rain</th>
+              <th>Bee status</th>
+            </tr>
+          </thead>
+          <tbody id="weatherRows"></tbody>
+        </table>
+      </div>
+
+      <div id="weatherError" class="error-box"></div>
+
+      <p class="small-note">
+        Τα όρια είναι μέσα στο script ανά level, ώστε μετά να τα αλλάξετε εύκολα για κάθε είδος μέλισσας.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = "https://api.open-meteo.com/v1/forecast";
+    const WTTR_URL = "https://wttr.in";
+
+    // v4: Πρώτο live API είναι το wttr.in. Το Open-Meteo μένει μόνο ως fallback,
+    // επειδή στο debugging γύρισε "Too many concurrent requests".
+
+    // Αν και τα live APIs μπλοκαριστούν από browser/network,
+    // δείχνουμε demo fallback ώστε το UI του hackathon να μη γεμίσει API ERROR.
+    // Για καθαρά live-only λειτουργία, άλλαξε το σε false.
+    const USE_DEMO_WHEN_API_BLOCKED = true;
+
+    // Test τοποθεσίες για τα 4 levels.
+    // Τα lat/lon είναι προσωρινά σημεία για να δούμε ότι το API δουλεύει.
+    // Μετά αλλάζουμε μόνο αυτές τις τιμές με τις ακριβείς τοποθεσίες των μελισσιών.
+    const levels = [
+      {
+        level: "Level 1",
+        bee: "Apis Mellifera",
+        location: "Αθήνα",
+        lat: 37.9838,
+        lon: 23.7275,
+        image: "../assets/bee-level-1.png",
+        limits: commonBeeLimits()
+      },
+      {
+        level: "Level 2",
+        bee: "tba",
+        location: "Ιμαλάια",
+        lat: 27.9881,
+        lon: 86.9250,
+        image: "../assets/bee-level-2.png",
+        limits: commonBeeLimits()
+      },
+      {
+        level: "Level 3",
+        bee: "tba",
+        location: "Τανζανία",
+        lat: -6.1630,
+        lon: 35.7516,
+        image: "../assets/bee-level-3.png",
+        limits: commonBeeLimits()
+      },
+      {
+        level: "Level 4",
+        bee: "tba",
+        location: "Ουγκάντα",
+        lat: 0.3476,
+        lon: 32.5825,
+        image: "../assets/bee-level-4.png",
+        limits: commonBeeLimits()
+      }
+    ];
+
+    const weatherRows = document.getElementById("weatherRows");
+    const updatedAt = document.getElementById("updatedAt");
+    const weatherError = document.getElementById("weatherError");
+    const refreshWeather = document.getElementById("refreshWeather");
+
+    let weatherLoadInProgress = false;
+    const WTTR_FALLBACK_DELAY_MS = 900;
+
+    refreshWeather.addEventListener("click", () => loadWeather(true));
+    document.addEventListener("DOMContentLoaded", () => loadWeather(false));
+
+    // Όχι πολύ συχνό auto-refresh, για να μη χτυπάμε συνέχεια τα free weather APIs.
+    setInterval(() => loadWeather(false), 20 * 60 * 1000);
+
+    function commonBeeLimits(){
+      return {
+        hot: 35,
+        cold: 10,
+        humidity: 85,
+        wind: 35,
+        gust: 50,
+        heavyRain: 1
+      };
+    }
+
+    async function loadWeather(forceLive){
+      if(weatherLoadInProgress){
+        return;
+      }
+
+      weatherLoadInProgress = true;
+      refreshWeather.disabled = true;
+      refreshWeather.textContent = "Loading";
+
+      weatherError.style.display = "none";
+      weatherError.textContent = "";
+      updatedAt.textContent = "Loading...";
+      renderLoadingRows();
+
+      const results = [];
+
+      // v4 logic:
+      // 1) Χρησιμοποιούμε πρώτο το wttr.in, γιατί στο local test δούλεψε ως live backup.
+      // 2) Κάνουμε σειριακά requests, όχι Promise.all, για να μη φάμε "Too many concurrent requests".
+      // 3) Το Open-Meteo μένει μόνο ως δεύτερο live fallback.
+      for(let index = 0; index < levels.length; index++){
+        const level = levels[index];
+
+        try{
+          const weather = await fetchWttrWeather(level);
+          results.push({ level, weather, error: null });
+        }
+        catch(wttrError){
+          console.warn("wttr.in primary request failed for", level.location, wttrError);
+
+          try{
+            const weather = await fetchOpenMeteoWeather(level);
+            weather.source = "LIVE Open-Meteo fallback";
+            results.push({ level, weather, error: null });
+          }
+          catch(openMeteoError){
+            const finalError = new Error(
+              "wttr.in failed: " + wttrError.message +
+              " | Open-Meteo failed: " + openMeteoError.message
+            );
+
+            if(USE_DEMO_WHEN_API_BLOCKED){
+              const demo = makeDemoWeather(level);
+              demo.apiWarning = finalError.message;
+              results.push({ level, weather: demo, error: null });
+            }
+            else{
+              results.push({ level, weather: null, error: finalError });
+            }
+          }
+        }
+
+        if(index < levels.length - 1){
+          await sleep(WTTR_FALLBACK_DELAY_MS);
+        }
+      }
+
+      renderRows(results);
+      showGlobalApiMessage(results);
+      updatedAt.textContent = "Updated: " + new Date().toLocaleString("el-GR");
+
+      weatherLoadInProgress = false;
+      refreshWeather.disabled = false;
+      refreshWeather.textContent = "Refresh";
+    }
+
+    function showGlobalApiMessage(results){
+      const failed = results.filter(result => result.error);
+      const demoRows = results.filter(result => result.weather && result.weather.source === "DEMO fallback");
+
+      if(failed.length > 0){
+        weatherError.textContent =
+          "Δεν φορτώθηκαν όλα τα live weather δεδομένα. Έλεγξε internet / API / browser shields και πάτα Refresh.";
+        weatherError.style.display = "block";
+        return;
+      }
+
+      if(demoRows.length > 0){
+        weatherError.textContent =
+          "Κάποια live weather requests μπλοκαρίστηκαν, οπότε δείχνουμε DEMO fallback μόνο για αυτά τα rows. Όσα γράφουν LIVE είναι πραγματικά live δεδομένα.";
+        weatherError.style.display = "block";
+      }
+    }
+
+    async function fetchAllOpenMeteoWeather(){
+      const url = buildOpenMeteoMultiUrl();
+      const data = await requestJson(url, "Open-Meteo multi");
+
+      if(data && data.error){
+        throw new Error(data.reason || "Open-Meteo returned error=true");
+      }
+
+      const list = Array.isArray(data) ? data : [data];
+
+      if(list.length < levels.length){
+        throw new Error("Open-Meteo returned fewer locations than expected");
+      }
+
+      return levels.map((level, index) => {
+        const item = list[index];
+
+        if(item && item.error){
+          throw new Error(item.reason || "Open-Meteo location " + (index + 1) + " returned error=true");
+        }
+
+        if(!item || !item.current){
+          throw new Error("missing current data for " + level.location);
+        }
+
+        return normalizeOpenMeteoWeather(item.current);
+      });
+    }
+
+    async function fetchWeather(level){
+      const errors = [];
+
+      try{
+        return await fetchOpenMeteoWeather(level);
+      }
+      catch(error){
+        errors.push("Open-Meteo: " + error.message);
+        console.warn("Open-Meteo failed for", level.location, error);
+      }
+
+      try{
+        return await fetchWttrWeather(level);
+      }
+      catch(error){
+        errors.push("wttr.in: " + error.message);
+        console.warn("wttr.in failed for", level.location, error);
+      }
+
+      const finalError = new Error(errors.join(" | "));
+
+      if(USE_DEMO_WHEN_API_BLOCKED){
+        const demo = makeDemoWeather(level);
+        demo.apiWarning = finalError.message;
+        return demo;
+      }
+
+      throw finalError;
+    }
+
+    async function fetchOpenMeteoWeather(level){
+      const url = buildOpenMeteoUrl(level);
+      const data = await requestJson(url, "Open-Meteo");
+
+      if(data && data.error){
+        throw new Error(data.reason || "Open-Meteo returned error=true");
+      }
+
+      if(!data || !data.current){
+        throw new Error("missing current data");
+      }
+
+      return normalizeOpenMeteoWeather(data.current);
+    }
+
+    async function fetchWttrWeather(level){
+      const url = `${WTTR_URL}/${level.lat},${level.lon}?format=j1`;
+      const data = await requestJson(url, "wttr.in");
+      return normalizeWttrWeather(data);
+    }
+
+    function buildOpenMeteoMultiUrl(){
+      const params = new URLSearchParams({
+        latitude: levels.map(level => level.lat).join(","),
+        longitude: levels.map(level => level.lon).join(","),
+        current: "temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m",
+        timezone: "auto",
+        temperature_unit: "celsius",
+        wind_speed_unit: "kmh",
+        precipitation_unit: "mm"
+      });
+
+      return API_URL + "?" + params.toString();
+    }
+
+    function buildOpenMeteoUrl(level){
+      const params = new URLSearchParams({
+        latitude: level.lat,
+        longitude: level.lon,
+        current: "temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m",
+        timezone: "auto",
+        temperature_unit: "celsius",
+        wind_speed_unit: "kmh",
+        precipitation_unit: "mm"
+      });
+
+      return API_URL + "?" + params.toString();
+    }
+
+    async function requestJson(url, label){
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const finalUrl = addCacheBuster(url);
+
+      try{
+        // Σκόπιμα απλό GET χωρίς custom headers και χωρίς cache: "no-store".
+        // Έτσι αποφεύγουμε περιττά CORS/preflight προβλήματα σε local preview / GitHub Pages.
+        const response = await fetch(finalUrl, { signal: controller.signal });
+        const text = await response.text();
+
+        if(!response.ok){
+          throw new Error("HTTP " + response.status + ": " + text.slice(0, 160));
+        }
+
+        try{
+          return JSON.parse(text);
+        }
+        catch(error){
+          throw new Error("JSON parse error: " + error.message);
+        }
+      }
+      catch(error){
+        if(error.name === "AbortError"){
+          throw new Error(label + " timeout after 12s | online=" + navigator.onLine);
+        }
+
+        throw new Error(label + " fetch failed: " + error.message + " | online=" + navigator.onLine);
+      }
+      finally{
+        clearTimeout(timeoutId);
+      }
+    }
+
+    function addCacheBuster(url){
+      // Δεν βάζουμε cache-buster εδώ. Τα συνεχώς νέα URLs μπορούν να αυξήσουν
+      // άσκοπα τα API hits όταν κάνουμε πολλά refresh κατά το debugging.
+      return url;
+    }
+
+    function sleep(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function normalizeOpenMeteoWeather(current){
+      return {
+        temperature_2m: valueOrZero(current.temperature_2m),
+        relative_humidity_2m: valueOrZero(current.relative_humidity_2m),
+        precipitation: valueOrZero(current.precipitation),
+        rain: valueOrZero(current.rain),
+        weather_code: valueOrZero(current.weather_code),
+        cloud_cover: valueOrZero(current.cloud_cover),
+        wind_speed_10m: valueOrZero(current.wind_speed_10m),
+        wind_gusts_10m: valueOrZero(current.wind_gusts_10m),
+        weather_text: null,
+        source: "LIVE Open-Meteo"
+      };
+    }
+
+    function normalizeWttrWeather(data){
+      const current = data && data.current_condition && data.current_condition[0];
+
+      if(!current){
+        throw new Error("missing current_condition data");
+      }
+
+      const wttrCode = valueOrZero(current.weatherCode);
+      const wmoCode = wttrCodeToWmoCode(wttrCode);
+      const description = current.weatherDesc && current.weatherDesc[0]
+        ? current.weatherDesc[0].value
+        : null;
+
+      return {
+        temperature_2m: valueOrZero(current.temp_C),
+        relative_humidity_2m: valueOrZero(current.humidity),
+        precipitation: valueOrZero(current.precipMM),
+        rain: valueOrZero(current.precipMM),
+        weather_code: wmoCode,
+        cloud_cover: valueOrZero(current.cloudcover),
+        wind_speed_10m: valueOrZero(current.windspeedKmph),
+        wind_gusts_10m: valueOrZero(current.windspeedKmph),
+        weather_text: description,
+        source: "LIVE wttr.in"
+      };
+    }
+
+    function wttrCodeToWmoCode(code){
+      const map = {
+        113: 0,
+        116: 2,
+        119: 3,
+        122: 3,
+        143: 45,
+        248: 45,
+        260: 45,
+        176: 61,
+        263: 51,
+        266: 53,
+        293: 51,
+        296: 61,
+        299: 63,
+        302: 65,
+        305: 61,
+        308: 65,
+        353: 61,
+        356: 63,
+        359: 65,
+        386: 95,
+        389: 95,
+        392: 95,
+        395: 95,
+        179: 71,
+        182: 67,
+        185: 67,
+        227: 71,
+        230: 75,
+        281: 67,
+        284: 67,
+        311: 67,
+        314: 67,
+        317: 67,
+        320: 73,
+        323: 71,
+        326: 73,
+        329: 75,
+        332: 75,
+        335: 85,
+        338: 86,
+        350: 77,
+        362: 85,
+        365: 85,
+        368: 71,
+        371: 75,
+        374: 85,
+        377: 77
+      };
+
+      return map[code] !== undefined ? map[code] : 3;
+    }
+
+    function makeDemoWeather(level){
+      const demoByLocation = {
+        "Αθήνα": {
+          temperature_2m: 29,
+          relative_humidity_2m: 46,
+          precipitation: 0,
+          rain: 0,
+          weather_code: 1,
+          cloud_cover: 20,
+          wind_speed_10m: 14,
+          wind_gusts_10m: 22,
+          weather_text: "Demo clear"
+        },
+        "Ιμαλάια": {
+          temperature_2m: 6,
+          relative_humidity_2m: 72,
+          precipitation: 0.2,
+          rain: 0.2,
+          weather_code: 3,
+          cloud_cover: 88,
+          wind_speed_10m: 28,
+          wind_gusts_10m: 42,
+          weather_text: "Demo cloudy"
+        },
+        "Τανζανία": {
+          temperature_2m: 27,
+          relative_humidity_2m: 67,
+          precipitation: 0,
+          rain: 0,
+          weather_code: 2,
+          cloud_cover: 45,
+          wind_speed_10m: 11,
+          wind_gusts_10m: 18,
+          weather_text: "Demo partly cloudy"
+        },
+        "Ουγκάντα": {
+          temperature_2m: 24,
+          relative_humidity_2m: 87,
+          precipitation: 1.4,
+          rain: 1.4,
+          weather_code: 63,
+          cloud_cover: 91,
+          wind_speed_10m: 9,
+          wind_gusts_10m: 16,
+          weather_text: "Demo rain"
+        }
+      };
+
+      return {
+        ...demoByLocation[level.location],
+        source: "DEMO fallback"
+      };
+    }
+
+    function valueOrZero(value){
+      const number = Number(value);
+
+      if(Number.isNaN(number)){
+        return 0;
+      }
+
+      return number;
+    }
+
+    function renderLoadingRows(){
+      weatherRows.innerHTML = levels.map(level => `
+        <tr>
+          <td>${beeCell(level)}</td>
+          <td>${locationCell(level)}</td>
+          <td colspan="7" class="loading-cell">Loading live weather...</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderRows(results){
+      weatherRows.innerHTML = results.map(result => {
+        if(result.error){
+          return renderErrorRow(result.level, result.error);
+        }
+
+        return renderWeatherRow(result.level, result.weather);
+      }).join("");
+    }
+
+    function renderWeatherRow(level, weather){
+      const status = evaluateBeeStatus(weather, level.limits);
+      const code = Number(weather.weather_code);
+      const apiWarning = weather.apiWarning
+        ? `<span class="api-debug">${escapeHtml(weather.apiWarning)}</span>`
+        : "";
+
+      return `
+        <tr>
+          <td>${beeCell(level)}</td>
+          <td>${locationCell(level)}</td>
+          <td>
+            <span class="weather-text">${escapeHtml(weather.weather_text || weatherCodeToText(code))}</span>
+            <span class="source-badge">${escapeHtml(weather.source || "LIVE")}</span>
+            ${apiWarning}
+          </td>
+          <td><span class="metric">${formatNumber(weather.temperature_2m, 1)}°C</span></td>
+          <td><span class="metric">${formatNumber(weather.relative_humidity_2m, 0)}%</span></td>
+          <td><span class="metric">${formatNumber(weather.wind_speed_10m, 0)} km/h</span></td>
+          <td><span class="metric">${formatNumber(weather.cloud_cover, 0)}%</span></td>
+          <td><span class="metric">${formatRain(weather)}</span></td>
+          <td>
+            <span class="status-pill status-${status.type}">${status.label}</span>
+            <span class="status-message ${status.type}">${status.message}</span>
+            <span class="bee-reaction">${status.reaction}</span>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderErrorRow(level, error){
+      console.error("Weather API failed for", level.location, error);
+      const detail = error && error.message ? escapeHtml(error.message) : "Unknown API error";
+
+      return `
+        <tr>
+          <td>${beeCell(level)}</td>
+          <td>${locationCell(level)}</td>
+          <td colspan="6" class="loading-cell">Weather unavailable<span class="api-debug">${detail}</span></td>
+          <td>
+            <span class="status-pill status-danger">API ERROR</span>
+            <span class="status-message danger">Δεν έχουμε live καιρό για αυτή τη μέλισσα τώρα.</span>
+          </td>
+        </tr>
+      `;
+    }
+
+    function escapeHtml(value){
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function beeCell(level){
+      return `
+        <div class="bee-cell">
+          <img class="bee-img" src="${level.image}" alt="${level.level} bee image placeholder">
+          <div>
+            <span class="level-name">${level.level}</span>
+            <span class="bee-name">${level.bee}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function locationCell(level){
+      return `
+        <div>
+          <span class="location-name">${level.location}</span>
+          <span class="location-coords">${level.lat.toFixed(2)}, ${level.lon.toFixed(2)}</span>
+        </div>
+      `;
+    }
+
+    function evaluateBeeStatus(weather, limits){
+      const temp = Number(weather.temperature_2m);
+      const humidity = Number(weather.relative_humidity_2m);
+      const wind = Number(weather.wind_speed_10m);
+      const gust = Number(weather.wind_gusts_10m);
+      const clouds = Number(weather.cloud_cover);
+      const code = Number(weather.weather_code);
+      const rain = getRainAmount(weather);
+
+      const warnings = [];
+      const caution = [];
+
+      if(code >= 95){
+        warnings.push("καταιγίδα");
+      }
+
+      if(isHeavyRainCode(code) || rain >= limits.heavyRain){
+        warnings.push("πολλή βροχή");
+      }
+      else if(isRainCode(code) || rain > 0){
+        caution.push("βροχή");
+      }
+
+      if(temp >= limits.hot){
+        warnings.push("πολλή ζέστη");
+      }
+
+      if(temp <= limits.cold){
+        warnings.push("πολύ κρύο");
+      }
+
+      if(humidity >= limits.humidity){
+        warnings.push("υψηλή υγρασία");
+      }
+
+      if(wind >= limits.wind || gust >= limits.gust){
+        warnings.push("δυνατός αέρας");
+      }
+
+      if(clouds >= 85 && warnings.length === 0){
+        caution.push("πολλή συννεφιά");
+      }
+
+      if(warnings.length > 0){
+        return {
+          type: "danger",
+          label: "WARNING",
+          message: "Κίνδυνος: " + unique(warnings).join(" / ") + ".",
+          reaction: "Οι μέλισσες πιθανό να μείνουν κοντά στην κυψέλη."
+        };
+      }
+
+      if(caution.length > 0){
+        return {
+          type: "caution",
+          label: "ΠΡΟΣΟΧΗ",
+          message: "Μέτριες συνθήκες: " + unique(caution).join(" / ") + ".",
+          reaction: "Η δραστηριότητα μπορεί να είναι πιο χαμηλή."
+        };
+      }
+
+      return {
+        type: "safe",
+        label: "OK",
+        message: "Οι συνθήκες είναι ήπιες.",
+        reaction: "Οι μέλισσες μπορούν να είναι ενεργές στο level."
+      };
+    }
+
+    function getRainAmount(weather){
+      return Math.max(
+        Number(weather.precipitation || 0),
+        Number(weather.rain || 0)
+      );
+    }
+
+    function formatRain(weather){
+      return formatNumber(getRainAmount(weather), 1) + " mm";
+    }
+
+    function formatNumber(value, digits){
+      const number = Number(value);
+
+      if(Number.isNaN(number)){
+        return "--";
+      }
+
+      return number.toFixed(digits);
+    }
+
+    function unique(items){
+      return [...new Set(items)];
+    }
+
+    function isRainCode(code){
+      return (
+        (code >= 51 && code <= 67) ||
+        (code >= 80 && code <= 82) ||
+        code >= 95
+      );
+    }
+
+    function isHeavyRainCode(code){
+      return [55, 57, 63, 65, 67, 81, 82, 95, 96, 99].includes(code);
+    }
+
+    function weatherCodeToText(code){
+      const descriptions = {
+        0: "Καθαρός ουρανός",
+        1: "Λίγη συννεφιά",
+        2: "Μερική συννεφιά",
+        3: "Συννεφιά",
+        45: "Ομίχλη",
+        48: "Παγωμένη ομίχλη",
+        51: "Ψιλόβροχο",
+        53: "Ψιλόβροχο",
+        55: "Έντονο ψιλόβροχο",
+        56: "Παγωμένο ψιλόβροχο",
+        57: "Έντονο παγωμένο ψιλόβροχο",
+        61: "Βροχή",
+        63: "Μέτρια βροχή",
+        65: "Δυνατή βροχή",
+        66: "Παγωμένη βροχή",
+        67: "Δυνατή παγωμένη βροχή",
+        71: "Χιόνι",
+        73: "Μέτριο χιόνι",
+        75: "Δυνατό χιόνι",
+        77: "Κόκκοι χιονιού",
+        80: "Μπόρα",
+        81: "Μέτρια μπόρα",
+        82: "Δυνατή μπόρα",
+        85: "Μπόρα χιονιού",
+        86: "Δυνατή μπόρα χιονιού",
+        95: "Καταιγίδα",
+        96: "Καταιγίδα με χαλάζι",
+        99: "Δυνατή καταιγίδα με χαλάζι"
+      };
+
+      return descriptions[code] || "Άγνωστος καιρός";
+    }
+  </script>
+</body>
+</html>
