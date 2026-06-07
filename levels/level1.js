@@ -3,6 +3,9 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const message = document.getElementById("message");
 
+const backgroundImage = new Image();
+backgroundImage.src = "background-level1.PNG";
+
 ctx.imageSmoothingEnabled = false;
 
 canvas.width = window.innerWidth;
@@ -466,34 +469,28 @@ for(const zone of dialogueZones){
 
 function drawBackground(){
 
-    ctx.fillStyle = "#87CEEB";
+    if(!backgroundImage.complete)
+        return;
 
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    const parallax = cameraX * 0.2;
 
-    ctx.fillStyle = "#7BBF6A";
+    const scale =
+        canvas.height /
+        backgroundImage.height;
 
-    for(let i=0;i<20;i++){
+    const drawWidth =
+        backgroundImage.width *
+        scale;
 
-        const x =
-            i * 350 -
-            cameraX * 0.25;
+    for(let i = -1; i < 10; i++){
 
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            canvas.height,
-            220,
+        ctx.drawImage(
+            backgroundImage,
+            i * drawWidth - parallax,
             0,
-            Math.PI * 2
+            drawWidth,
+            canvas.height
         );
-
-        ctx.fill();
     }
 }
 
@@ -742,7 +739,7 @@ function draw(){
     // PLATFORMS
     /////////////////////////////////////////////////////
 
-    ctx.fillStyle = "#4CAF50";
+    ctx.fillStyle = "#8FAF63";
 
     for(let p of platforms){
 
