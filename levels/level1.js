@@ -691,8 +691,7 @@ function drawDialogue(){
 
     ctx.fillStyle = "#FF77B7";
 
-    ctx.font =
-        "bold 30px monospace";
+    ctx.font = "42px VT323";
 
     ctx.fillText(
         currentDialogue.title,
@@ -707,7 +706,7 @@ function drawDialogue(){
     ctx.fillStyle = "#3F512C";
 
     ctx.font =
-        "24px monospace";
+        "32px VT323";
 
     wrapText(
         currentDialogue.text,
@@ -723,10 +722,12 @@ function drawDialogue(){
 
     ctx.fillStyle = "#6B7A3A";
 
+    ctx.font = "28px VT323";
+
     ctx.fillText(
-        "[ ENTER ] Continue",
-        x + 25,
-        y + height - 25
+     "▶ PRESS ENTER",
+     x + 25,
+     y + height - 25
     );
 }
 /////////////////////////////////////////////////////
