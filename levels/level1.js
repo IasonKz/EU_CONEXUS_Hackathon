@@ -1,3 +1,4 @@
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const message = document.getElementById("message");
@@ -23,6 +24,37 @@ const gravity = 0.7;
 const levelWidth = 5000;
 
 let cameraX = 0;
+
+/////////////////////////////////////////////////////
+// DIALOGUE SYSTEM
+/////////////////////////////////////////////////////
+
+let dialogueActive = false;
+let currentDialogue = null;
+
+const dialogueZones = [
+
+    {
+        x: 500,
+        triggered: false,
+        title: "Welcome!",
+        text: "Artificial Intelligence is technology that allows computers to perform tasks that normally require human intelligence."
+    },
+
+    {
+        x: 1800,
+        triggered: false,
+        title: "Machine Learning",
+        text: "Machine Learning is a branch of AI where computers learn patterns from data instead of being explicitly programmed."
+    },
+
+    {
+        x: 3300,
+        triggered: false,
+        title: "Neural Networks",
+        text: "Neural Networks are inspired by the human brain and are used in many modern AI systems."
+    }
+];
 
 /////////////////////////////////////////////////////
 // SPRITES
@@ -130,11 +162,23 @@ const keys = {};
 
 document.addEventListener("keydown", e => {
 
+    if (
+        dialogueActive &&
+        e.key === "Enter"
+    ) {
+
+        dialogueActive = false;
+        currentDialogue = null;
+
+        return;
+    }
+
     keys[e.key] = true;
 
     if(
         (e.key === " " || e.key === "ArrowUp")
         && !player.jumping
+        && !dialogueActive
     ){
 
         player.velY = -15;
@@ -241,6 +285,8 @@ function hit(a,b){
 function update(){
 
     if(gameOver || gameWon) return;
+
+    if(dialogueActive) return;
 
     /////////////////////////////////////////////////////
     // MOVEMENT
@@ -374,6 +420,25 @@ function update(){
     }
 
     /////////////////////////////////////////////////////
+// DIALOGUE TRIGGERS
+/////////////////////////////////////////////////////
+
+for(const zone of dialogueZones){
+
+    if(
+        !zone.triggered &&
+        player.x >= zone.x
+    ){
+
+        zone.triggered = true;
+
+        dialogueActive = true;
+
+        currentDialogue = zone;
+    }
+}
+
+    /////////////////////////////////////////////////////
     // CAMERA
     /////////////////////////////////////////////////////
 
@@ -432,6 +497,238 @@ function drawBackground(){
     }
 }
 
+function wrapText(
+    text,
+    x,
+    y,
+    maxWidth,
+    lineHeight
+){
+
+    const words = text.split(" ");
+    let line = "";
+
+    for(let n = 0; n < words.length; n++){
+
+        const testLine =
+            line + words[n] + " ";
+
+        const metrics =
+            ctx.measureText(testLine);
+
+        const testWidth =
+            metrics.width;
+
+        if(
+            testWidth > maxWidth &&
+            n > 0
+        ){
+
+            ctx.fillText(
+                line,
+                x,
+                y
+            );
+
+            line =
+                words[n] + " ";
+
+            y += lineHeight;
+        }
+
+        else{
+
+            line = testLine;
+        }
+    }
+
+    ctx.fillText(
+        line,
+        x,
+        y
+    );
+}
+
+function roundRect(
+    x,
+    y,
+    width,
+    height,
+    radius
+){
+
+    ctx.beginPath();
+
+    ctx.moveTo(x + radius, y);
+
+    ctx.lineTo(
+        x + width - radius,
+        y
+    );
+
+    ctx.quadraticCurveTo(
+        x + width,
+        y,
+        x + width,
+        y + radius
+    );
+
+    ctx.lineTo(
+        x + width,
+        y + height - radius
+    );
+
+    ctx.quadraticCurveTo(
+        x + width,
+        y + height,
+        x + width - radius,
+        y + height
+    );
+
+    ctx.lineTo(
+        x + radius,
+        y + height
+    );
+
+    ctx.quadraticCurveTo(
+        x,
+        y + height,
+        x,
+        y + height - radius
+    );
+
+    ctx.lineTo(
+        x,
+        y + radius
+    );
+
+    ctx.quadraticCurveTo(
+        x,
+        y,
+        x + radius,
+        y
+    );
+
+    ctx.closePath();
+}
+
+function drawDialogue(){
+
+    if(!dialogueActive || !currentDialogue)
+        return;
+
+    const width = 900;
+    const height = 300;
+
+    const x =
+        (canvas.width - width) / 2;
+
+    const y =
+        canvas.height - 380;
+
+    /////////////////////////////////////////////////////
+    // SHADOW
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#C59D79";
+
+    ctx.fillRect(
+        x + 8,
+        y + 8,
+        width,
+        height
+    );
+
+    /////////////////////////////////////////////////////
+    // MAIN PANEL
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#EFE7D8";
+
+    roundRect(
+        x,
+        y,
+        width,
+        height,
+        16
+    );
+
+    ctx.fill();
+
+    /////////////////////////////////////////////////////
+    // BORDER
+    /////////////////////////////////////////////////////
+
+    ctx.strokeStyle = "#F0B6B6";
+    ctx.lineWidth = 6;
+
+    roundRect(
+        x,
+        y,
+        width,
+        height,
+        16
+    );
+
+    ctx.stroke();
+
+    /////////////////////////////////////////////////////
+    // HEADER BAR
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#DDB46B";
+
+    ctx.fillRect(
+        x,
+        y,
+        width,
+        50
+    );
+
+    /////////////////////////////////////////////////////
+    // TITLE
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#FF77B7";
+
+    ctx.font =
+        "bold 30px monospace";
+
+    ctx.fillText(
+        currentDialogue.title,
+        x + 25,
+        y + 35
+    );
+
+    /////////////////////////////////////////////////////
+    // TEXT
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#3F512C";
+
+    ctx.font =
+        "24px monospace";
+
+    wrapText(
+        currentDialogue.text,
+        x + 25,
+        y + 95,
+        width - 50,
+        34
+    );
+
+    /////////////////////////////////////////////////////
+    // FOOTER
+    /////////////////////////////////////////////////////
+
+    ctx.fillStyle = "#6B7A3A";
+
+    ctx.fillText(
+        "[ ENTER ] Continue",
+        x + 25,
+        y + height - 25
+    );
+}
 /////////////////////////////////////////////////////
 // DRAW
 /////////////////////////////////////////////////////
@@ -507,6 +804,8 @@ function draw(){
     currentAnimation.drawWidth,
     currentAnimation.drawHeight
 );
+
+drawDialogue();
 }
 
 /////////////////////////////////////////////////////
