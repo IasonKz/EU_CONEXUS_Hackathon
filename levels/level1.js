@@ -35,10 +35,10 @@ let currentDialogue = null;
 const dialogueZones = [
 
     {
-        x: 500,
+        x: 400,
         triggered: false,
         title: "Welcome!",
-        text: "Artificial Intelligence is technology that allows computers to perform tasks that normally require human intelligence."
+        text: "Guide FLora to the Apis Mellifera and bring her the healing cure!"
     },
 
     {
@@ -373,7 +373,7 @@ function update(){
             gameOver = true;
 
             message.innerText =
-                "💀 Game Over - Press R";
+                "Game Over! Press R to restart!";
         }
     }
 
@@ -386,7 +386,7 @@ function update(){
         gameWon = true;
 
         message.innerText =
-            "🎉 You Win! Press R";
+            "You Win!";
     }
 
     /////////////////////////////////////////////////////
@@ -398,7 +398,7 @@ function update(){
         gameOver = true;
 
         message.innerText =
-            "💀 Game Over - Press R";
+            "Game Over! Press R to restart!";
     }
 
     /////////////////////////////////////////////////////
@@ -618,13 +618,13 @@ function drawDialogue(){
         return;
 
     const width = 900;
-    const height = 300;
+    const height = 240;
 
     const x =
         (canvas.width - width) / 2;
 
     const y =
-        canvas.height - 380;
+        canvas.height - 600;
 
     /////////////////////////////////////////////////////
     // SHADOW
@@ -689,7 +689,7 @@ function drawDialogue(){
     // TITLE
     /////////////////////////////////////////////////////
 
-    ctx.fillStyle = "#FF77B7";
+    ctx.fillStyle = "#FFFFFF";
 
     ctx.font = "42px VT323";
 
@@ -725,7 +725,7 @@ function drawDialogue(){
     ctx.font = "28px VT323";
 
     ctx.fillText(
-     "▶ PRESS ENTER",
+     "▶ press enter to continue",
      x + 25,
      y + height - 25
     );
@@ -822,7 +822,6 @@ function loop(){
     requestAnimationFrame(loop);
 }
 
-message.innerText =
-"← → Move | SPACE Jump | R Restart";
+
 
 loop();
