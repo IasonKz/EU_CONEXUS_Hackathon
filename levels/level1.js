@@ -3,6 +3,18 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const message = document.getElementById("message");
 
+const backgroundMusic = new Audio("blossom.wav");
+
+const winSound = new Audio("level_complete_sfx.wav");
+
+const loseSound = new Audio("game_over_sfx.wav");
+
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3;
+
+winSound.volume = 0.8;
+loseSound.volume = 0.8;
+
 const backgroundImage = new Image();
 backgroundImage.src = "background-level1.PNG";
 
@@ -22,6 +34,7 @@ window.addEventListener("resize", () => {
 
 let gameOver = false;
 let gameWon = false;
+let winPlayed = false;
 
 const gravity = 0.7;
 const levelWidth = 5000;
@@ -164,6 +177,12 @@ function updateAnimation(){
 const keys = {};
 
 document.addEventListener("keydown", e => {
+
+    if(backgroundMusic.paused){
+
+    backgroundMusic.play()
+    .catch(err => console.log(err));
+}
 
     if (
         dialogueActive &&
@@ -373,6 +392,10 @@ function update(){
 
         if(hit(player,e)){
 
+            backgroundMusic.pause();
+
+            loseSound.play();
+
             gameOver = true;
 
             message.innerText =
@@ -386,11 +409,22 @@ function update(){
 
     if(hit(player,goal)){
 
-        gameWon = true;
+    gameWon = true;
 
-        message.innerText =
-            "You Win!";
+    if(!winPlayed){
+
+        backgroundMusic.pause();
+
+        winSound.play();
+
+        winPlayed = true;
     }
+
+    message.className = "win";
+
+    message.innerText =
+        "You win!";
+}
 
     /////////////////////////////////////////////////////
     // FALL
@@ -818,7 +852,6 @@ function loop(){
 
     requestAnimationFrame(loop);
 }
-
 
 
 loop();

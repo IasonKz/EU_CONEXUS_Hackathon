@@ -183,6 +183,25 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+    const globeMusic = new Audio("levels/blossom.wav");
+
+    globeMusic.loop = true;
+    globeMusic.volume = 0.3;
+
+    let musicStarted = false;
+
+    document.addEventListener("click", () => {
+
+    if(!musicStarted){
+
+    globeMusic.play()
+      .catch(err => console.log(err));
+
+    musicStarted = true;
+    }
+
+});
+
     // Η εικόνα που έστειλες είναι ενσωματωμένη εδώ ως data URI.
     // Σε κανονικό project μπορείς να βάλεις: const MAP_IMAGE = './world-map.png';
     const MAP_IMAGE = 'world-map.png';
