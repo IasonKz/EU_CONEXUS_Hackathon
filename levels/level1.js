@@ -60,15 +60,15 @@ const dialogueZones = [
     {
         x: 1800,
         triggered: false,
-        title: "Machine Learning",
-        text: "Machine Learning is a branch of AI where computers learn patterns from data instead of being explicitly programmed."
+        title: "Blah blah blah",
+        text: "blah blah blah"
     },
 
     {
         x: 3300,
         triggered: false,
-        title: "Neural Networks",
-        text: "Neural Networks are inspired by the human brain and are used in many modern AI systems."
+        title: "Blah blah blah Blah blah blah Blah blah blah",
+        text: "Blah blah blah Blah blah blah Blah blah blah Blah blah blah Blah blah blah Blah blah blah Blah blah blah Blah blah blah"
     }
 ];
 
