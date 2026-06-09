@@ -9,13 +9,28 @@ canvas {
     display: block;
 }
 
+
 #message {
-    position: absolute;
-    top: 20px;
-    width: 100%;
+
+    position: fixed;
+
+    top: 120px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-family: 'VT323', monospace;
+    font-size: 64px;
+
+    color: #8FAF63;
+
+    text-shadow:
+        4px 4px 0 #f5a6ce,
+        8px 8px 0 #ffffff;
+
+    pointer-events: none;
+
+    z-index: 9999;
+
     text-align: center;
-    font-size: 40px;
-    color: white;
-    font-weight: bold;
-    text-shadow: 2px 2px 5px black;
 }
