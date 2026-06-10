@@ -1,36 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 html, body {
     margin: 0;
     height: 100%;
     overflow: hidden;
-    background: skyblue;
+    background: #a8d8f0;
+    font-family: 'VT323', monospace;
+    image-rendering: pixelated;
 }
 
 canvas {
     display: block;
 }
 
-
 #message {
-
     position: fixed;
-
-    top: 120px;
+    top: 96px;
     left: 50%;
-
     transform: translateX(-50%);
-
-    font-family: 'VT323', monospace;
-    font-size: 64px;
-
-    color: #8FAF63;
-
-    text-shadow:
-        4px 4px 0 #f5a6ce,
-        8px 8px 0 #ffffff;
-
-    pointer-events: none;
-
-    z-index: 9999;
-
+    width: min(980px, calc(100vw - 36px));
     text-align: center;
+    font-size: 44px;
+    line-height: 0.95;
+    color: #ffffff;
+    text-shadow: 4px 4px 0 #fe6db6, 7px 7px 0 rgba(43,33,24,.34);
+    pointer-events: none;
+    z-index: 50;
+}
+
+#lobbyButton {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 2200;
+    border: 4px solid #2b2118;
+    border-radius: 12px;
+    background: rgba(255, 248, 209, 0.95);
+    color: #2b2118;
+    font-family: 'VT323', monospace;
+    font-size: 28px;
+    line-height: 1;
+    padding: 9px 18px;
+    cursor: pointer;
+    box-shadow: 0 7px 0 rgba(0,0,0,.22);
+}
+
+#lobbyButton:hover {
+    transform: translateY(-2px);
+}
+
+#lobbyButton:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 0 rgba(0,0,0,.22);
+}
+
+.fact-box {
+    display: none;
+}
+
+.dialogue-box {
+    position: fixed;
+    left: 50%;
+    bottom: 42px;
+    transform: translateX(-50%);
+    width: min(900px, calc(100vw - 48px));
+    min-height: 210px;
+    background: #efe7d8;
+    color: #3f512c;
+    border: 6px solid #f0b6b6;
+    border-radius: 16px;
+    box-shadow: 8px 8px 0 #c59d79, 0 18px 38px rgba(0,0,0,.28);
+    z-index: 1800;
+    overflow: hidden;
+    font-size: 34px;
+    line-height: 1.02;
+}
+
+.dialogue-box .speaker,
+.dialogue-box .intro-title {
+    display: block;
+    margin: 0;
+    background: #ddb46b;
+    color: #ffffff;
+    padding: 8px 25px 7px;
+    font-size: 42px;
+    line-height: 0.95;
+    text-shadow: 2px 2px 0 rgba(43,33,24,.24);
+}
+
+.dialogue-box .line,
+.dialogue-box .intro-line {
+    padding: 24px 25px 12px;
+}
+
+.dialogue-box .line p,
+.dialogue-box .intro-line p {
+    margin: 0 0 12px;
+}
+
+.dialogue-box .footer {
+    position: absolute;
+    right: 24px;
+    bottom: 16px;
+    color: #6b7a3a;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 760px) {
+    #message {
+        top: 78px;
+        font-size: 30px;
+    }
+
+    .dialogue-box {
+        bottom: 18px;
+        min-height: 190px;
+        font-size: 26px;
+    }
+
+    .dialogue-box .speaker,
+    .dialogue-box .intro-title {
+        font-size: 32px;
+    }
+
+    .dialogue-box .footer {
+        font-size: 22px;
+    }
 }

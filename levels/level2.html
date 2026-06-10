@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Level 2!</title>
-    <link rel="stylesheet" href="level2.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Level 2: Himalaya Forest</title>
+    <link rel="icon" type="image/png" href="../assets/flora-main.png">
+    <link rel="stylesheet" href="level1.css">
 </head>
 <body>
 
+<button id="lobbyButton" type="button" onclick="window.location.href='../globe_3d_pins.html'">🌍 Lobby</button>
 <canvas id="gameCanvas"></canvas>
 <div id="message"></div>
+<div id="topFactBox" class="fact-box hidden"></div>
+<div id="introBox" class="dialogue-box hidden"></div>
+<div id="npcDialogueBox" class="dialogue-box hidden"></div>
 
+<script src="../assets/audio-manager.js"></script>
+<script src="../weather/weather-api.js"></script>
 <script src="level2.js"></script>
+<script src="level-engine.js"></script>
+<script src="../assets/accessibility-helper.js"></script>
 
 </body>
 </html>

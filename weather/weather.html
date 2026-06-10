@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Weather | apiconIASIS</title>
+    <link rel="icon" type="image/png" href="../assets/flora-main.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
@@ -297,6 +298,12 @@
       line-height:1.1;
     }
 
+    .small-note a{
+      color:#fe6db6;
+      text-decoration:underline;
+      text-decoration-thickness:2px;
+    }
+
     @keyframes blinkWarning{
       0%,100%{ background:white; }
       50%{ background:#ffe1e1; }
@@ -366,7 +373,7 @@
       <div id="weatherError" class="error-box"></div>
 
       <p class="small-note">
-        
+        Weather data sources: <a href="https://wttr.in/" target="_blank" rel="noopener noreferrer">wttr.in</a> and <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>. Open-Meteo weather data is provided under the <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution 4.0 International</a> data licence.
       </p>
     </section>
   </main>
@@ -375,22 +382,21 @@
     const API_URL = "https://api.open-meteo.com/v1/forecast";
     const WTTR_URL = "https://wttr.in";
 
-    // v4: Πρώτο live API είναι το wttr.in. Το Open-Meteo μένει μόνο ως fallback,
-    // επειδή στο debugging γύρισε "Too many concurrent requests".
+    // v4: wttr.in is the first live API. Open-Meteo stays as a fallback,
+    // because it can sometimes return "Too many concurrent requests" during testing.
 
-    // Αν και τα live APIs μπλοκαριστούν από browser/network,
-    // δείχνουμε demo fallback ώστε το UI του hackathon να μη γεμίσει API ERROR.
-    // Για καθαρά live-only λειτουργία, άλλαξε το σε false.
+    // If live APIs are blocked by the browser or network,
+    // show demo fallback data so the hackathon UI does not fill with API ERROR rows.
+    // For strictly live-only behavior, change this to false.
     const USE_DEMO_WHEN_API_BLOCKED = true;
 
-    // Test τοποθεσίες για τα 4 levels.
-    // Τα lat/lon είναι προσωρινά σημεία για να δούμε ότι το API δουλεύει.
-    // Μετά αλλάζουμε μόνο αυτές τις τιμές με τις ακριβείς τοποθεσίες των μελισσιών.
+    // Test locations for the five levels.
+    // The coordinates are editable level anchor points for the Weather Station.
     const levels = [
       {
         level: "Level 1",
-        bee: "Apis Mellifera",
-        location: "Αθήνα",
+        bee: "Apis mellifera",
+        location: "Athens",
         lat: 37.9838,
         lon: 23.7275,
         image: "../assets/bee-level-1.png",
@@ -398,8 +404,8 @@
       },
       {
         level: "Level 2",
-        bee: "tba",
-        location: "Ιμαλάια",
+        bee: "Meliponini",
+        location: "Himalaya",
         lat: 27.9881,
         lon: 86.9250,
         image: "../assets/bee-level-2.png",
@@ -407,8 +413,8 @@
       },
       {
         level: "Level 3",
-        bee: "tba",
-        location: "Τανζανία",
+        bee: "Xylocopa violacea",
+        location: "Tanzania",
         lat: -6.1630,
         lon: 35.7516,
         image: "../assets/bee-level-3.png",
@@ -416,11 +422,20 @@
       },
       {
         level: "Level 4",
-        bee: "tba",
-        location: "Ουγκάντα",
+        bee: "Aloe carpenter bee",
+        location: "Uganda",
         lat: 0.3476,
         lon: 32.5825,
         image: "../assets/bee-level-4.png",
+        limits: commonBeeLimits()
+      },
+      {
+        level: "Level 5",
+        bee: "Leioproctus",
+        location: "New Zealand",
+        lat: -41.2865,
+        lon: 174.7762,
+        image: "../assets/bee-level-5.png",
         limits: commonBeeLimits()
       }
     ];
@@ -436,7 +451,7 @@
     refreshWeather.addEventListener("click", () => loadWeather(true));
     document.addEventListener("DOMContentLoaded", () => loadWeather(false));
 
-    // Όχι πολύ συχνό auto-refresh, για να μη χτυπάμε συνέχεια τα free weather APIs.
+    // Keep auto-refresh moderate so the free weather APIs are not called too often.
     setInterval(() => loadWeather(false), 20 * 60 * 1000);
 
     function commonBeeLimits(){
@@ -467,9 +482,9 @@
       const results = [];
 
       // v4 logic:
-      // 1) Χρησιμοποιούμε πρώτο το wttr.in, γιατί στο local test δούλεψε ως live backup.
-      // 2) Κάνουμε σειριακά requests, όχι Promise.all, για να μη φάμε "Too many concurrent requests".
-      // 3) Το Open-Meteo μένει μόνο ως δεύτερο live fallback.
+      // 1) Try wttr.in first because it behaves well as a live backup in local tests.
+      // 2) Use sequential requests instead of Promise.all to avoid "Too many concurrent requests".
+      // 3) Keep Open-Meteo as the second live fallback.
       for(let index = 0; index < levels.length; index++){
         const level = levels[index];
 
@@ -509,7 +524,7 @@
 
       renderRows(results);
       showGlobalApiMessage(results);
-      updatedAt.textContent = "Updated: " + new Date().toLocaleString("el-GR");
+      updatedAt.textContent = "Updated: " + new Date().toLocaleString("en-GB");
 
       weatherLoadInProgress = false;
       refreshWeather.disabled = false;
@@ -522,14 +537,14 @@
 
       if(failed.length > 0){
         weatherError.textContent =
-          "Δεν φορτώθηκαν όλα τα live weather δεδομένα. Έλεγξε internet / API / browser shields και πάτα Refresh.";
+          "Some live weather data did not load. Check your internet connection, API access, or browser shields, then press Refresh.";
         weatherError.style.display = "block";
         return;
       }
 
       if(demoRows.length > 0){
         weatherError.textContent =
-          "Κάποια live weather requests μπλοκαρίστηκαν, οπότε δείχνουμε DEMO fallback μόνο για αυτά τα rows. Όσα γράφουν LIVE είναι πραγματικά live δεδομένα.";
+          "Some live weather requests were blocked, so DEMO fallback data is shown only for those rows. Rows marked LIVE use real live data.";
         weatherError.style.display = "block";
       }
     }
@@ -648,8 +663,8 @@
       const finalUrl = addCacheBuster(url);
 
       try{
-        // Σκόπιμα απλό GET χωρίς custom headers και χωρίς cache: "no-store".
-        // Έτσι αποφεύγουμε περιττά CORS/preflight προβλήματα σε local preview / GitHub Pages.
+        // Intentionally use a simple GET request without custom headers and without cache: "no-store".
+        // This avoids unnecessary CORS/preflight issues in local preview and GitHub Pages.
         const response = await fetch(finalUrl, { signal: controller.signal });
         const text = await response.text();
 
@@ -677,8 +692,8 @@
     }
 
     function addCacheBuster(url){
-      // Δεν βάζουμε cache-buster εδώ. Τα συνεχώς νέα URLs μπορούν να αυξήσουν
-      // άσκοπα τα API hits όταν κάνουμε πολλά refresh κατά το debugging.
+      // Do not add a cache-buster here. Constantly changing URLs can unnecessarily increase
+      // API hits during debugging refreshes.
       return url;
     }
 
@@ -827,6 +842,17 @@
           wind_speed_10m: 9,
           wind_gusts_10m: 16,
           weather_text: "Demo rain"
+        },
+        "New Zealand": {
+          temperature_2m: 16,
+          relative_humidity_2m: 68,
+          precipitation: 0.3,
+          rain: 0.3,
+          weather_code: 2,
+          cloud_cover: 55,
+          wind_speed_10m: 20,
+          wind_gusts_10m: 32,
+          weather_text: "Demo breezy"
         }
       };
 
@@ -907,7 +933,7 @@
           <td colspan="6" class="loading-cell">Weather unavailable<span class="api-debug">${detail}</span></td>
           <td>
             <span class="status-pill status-danger">API ERROR</span>
-            <span class="status-message danger">Δεν έχουμε live καιρό για αυτή τη μέλισσα τώρα.</span>
+            <span class="status-message danger">Live weather is not available for this bee right now.</span>
           </td>
         </tr>
       `;
@@ -956,59 +982,59 @@
       const caution = [];
 
       if(code >= 95){
-        warnings.push("καταιγίδα");
+        warnings.push("thunderstorm");
       }
 
       if(isHeavyRainCode(code) || rain >= limits.heavyRain){
-        warnings.push("πολλή βροχή");
+        warnings.push("heavy rain");
       }
       else if(isRainCode(code) || rain > 0){
-        caution.push("βροχή");
+        caution.push("rain");
       }
 
       if(temp >= limits.hot){
-        warnings.push("πολλή ζέστη");
+        warnings.push("extreme heat");
       }
 
       if(temp <= limits.cold){
-        warnings.push("πολύ κρύο");
+        warnings.push("extreme cold");
       }
 
       if(humidity >= limits.humidity){
-        warnings.push("υψηλή υγρασία");
+        warnings.push("high humidity");
       }
 
       if(wind >= limits.wind || gust >= limits.gust){
-        warnings.push("δυνατός αέρας");
+        warnings.push("strong wind");
       }
 
       if(clouds >= 85 && warnings.length === 0){
-        caution.push("πολλή συννεφιά");
+        caution.push("heavy cloud cover");
       }
 
       if(warnings.length > 0){
         return {
           type: "danger",
           label: "WARNING",
-          message: "Κίνδυνος: " + unique(warnings).join(" / ") + ".",
-          reaction: "Οι μέλισσες πιθανό να μείνουν κοντά στην κυψέλη."
+          message: "Risk: " + unique(warnings).join(" / ") + ".",
+          reaction: "The bees will probably stay close to the hive."
         };
       }
 
       if(caution.length > 0){
         return {
           type: "caution",
-          label: "ΠΡΟΣΟΧΗ",
-          message: "Μέτριες συνθήκες: " + unique(caution).join(" / ") + ".",
-          reaction: "Η δραστηριότητα μπορεί να είναι πιο χαμηλή."
+          label: "CAUTION",
+          message: "Moderate conditions: " + unique(caution).join(" / ") + ".",
+          reaction: "Activity may be lower than usual."
         };
       }
 
       return {
         type: "safe",
         label: "OK",
-        message: "Οι συνθήκες είναι ήπιες.",
-        reaction: "Οι μέλισσες μπορούν να είναι ενεργές στο level."
+        message: "Conditions are mild.",
+        reaction: "The bees can stay active in this level."
       };
     }
 
@@ -1051,37 +1077,37 @@
 
     function weatherCodeToText(code){
       const descriptions = {
-        0: "Καθαρός ουρανός",
-        1: "Λίγη συννεφιά",
-        2: "Μερική συννεφιά",
-        3: "Συννεφιά",
-        45: "Ομίχλη",
-        48: "Παγωμένη ομίχλη",
-        51: "Ψιλόβροχο",
-        53: "Ψιλόβροχο",
-        55: "Έντονο ψιλόβροχο",
-        56: "Παγωμένο ψιλόβροχο",
-        57: "Έντονο παγωμένο ψιλόβροχο",
-        61: "Βροχή",
-        63: "Μέτρια βροχή",
-        65: "Δυνατή βροχή",
-        66: "Παγωμένη βροχή",
-        67: "Δυνατή παγωμένη βροχή",
-        71: "Χιόνι",
-        73: "Μέτριο χιόνι",
-        75: "Δυνατό χιόνι",
-        77: "Κόκκοι χιονιού",
-        80: "Μπόρα",
-        81: "Μέτρια μπόρα",
-        82: "Δυνατή μπόρα",
-        85: "Μπόρα χιονιού",
-        86: "Δυνατή μπόρα χιονιού",
-        95: "Καταιγίδα",
-        96: "Καταιγίδα με χαλάζι",
-        99: "Δυνατή καταιγίδα με χαλάζι"
+        0: "Clear sky",
+        1: "Mainly clear",
+        2: "Partly cloudy",
+        3: "Overcast",
+        45: "Fog",
+        48: "Depositing rime fog",
+        51: "Light drizzle",
+        53: "Moderate drizzle",
+        55: "Dense drizzle",
+        56: "Light freezing drizzle",
+        57: "Dense freezing drizzle",
+        61: "Slight rain",
+        63: "Moderate rain",
+        65: "Heavy rain",
+        66: "Light freezing rain",
+        67: "Heavy freezing rain",
+        71: "Slight snow",
+        73: "Moderate snow",
+        75: "Heavy snow",
+        77: "Snow grains",
+        80: "Slight rain showers",
+        81: "Moderate rain showers",
+        82: "Violent rain showers",
+        85: "Slight snow showers",
+        86: "Heavy snow showers",
+        95: "Thunderstorm",
+        96: "Thunderstorm with slight hail",
+        99: "Thunderstorm with heavy hail"
       };
 
-      return descriptions[code] || "Άγνωστος καιρός";
+      return descriptions[code] || "Unknown weather";
     }
   </script>
 </body>

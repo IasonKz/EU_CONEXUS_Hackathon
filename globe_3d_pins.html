@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bee Wonderer</title>
+  <link rel="icon" type="image/png" href="assets/flora-main.png">
   <style>
 
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
@@ -33,6 +34,7 @@
       user-select: none;
       backdrop-filter: blur(6px);
       text-shadow:3px 3px 0 #fe6db6;
+      z-index: 600;
     }
 
     #info strong {
@@ -40,135 +42,465 @@
       margin-bottom: 4px;
     }
 
+    #progressHint{
+      position:fixed;
+      right:22px;
+      top:20px;
+      z-index:650;
+      color:#2b2118;
+      background:rgba(255,248,209,.92);
+      border:4px solid #2b2118;
+      border-radius:14px;
+      padding:8px 14px;
+      font-size:24px;
+      box-shadow:0 6px 0 rgba(0,0,0,.18);
+      text-align:center;
+      min-width:200px;
+    }
+
     canvas {
       display: block;
     }
 
     #bottomButtons{
-  position:fixed;
-  bottom:70px;
-  left:85%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:30px;
-  z-index:500;
-}
+      position:fixed;
+      bottom:54px;
+      right:44px;
+      left:auto;
+      transform:none;
+      display:flex;
+      gap:38px;
+      z-index:650;
+    }
 
-#bottomButtons img{
-  width:150px;
-  height:150px;
+    #bottomButtons img{
+      width:190px;
+      height:190px;
+      cursor:pointer;
+      object-fit:contain;
+      transition:.2s;
+      filter:drop-shadow(0 10px 0 rgba(0,0,0,.16));
+    }
+
+    #bottomButtons img:hover{
+      transform:scale(1.08);
+    }
+
+    #floraPanel{
+      position:fixed;
+      left:250px;
+      bottom:170px;
+      width:165px;
+      z-index:640;
+      text-align:center;
+      filter:drop-shadow(0 14px 16px rgba(0,0,0,.28));
+    }
+
+    #mainCharacter{
+      width:155px;
+      max-width:22vw;
+      height:auto;
+      image-rendering:pixelated;
+      display:block;
+      margin:0 auto;
+      pointer-events:none;
+    }
+
+    #floraName{
+      display:inline-block;
+      margin-top:-8px;
+      padding:4px 16px;
+      border:4px solid #2b2118;
+      border-radius:999px;
+      background:rgba(255,248,209,.96);
+      color:#2b2118;
+      font-size:28px;
+      line-height:1;
+      box-shadow:0 5px 0 rgba(0,0,0,.18);
+    }
+
+    #floraInfoButton{
+      margin-top:9px;
+      border:5px solid #2b2118;
+      border-radius:14px;
+      background:#ffd166;
+      color:#2b2118;
+      font-family:"VT323", monospace;
+      font-size:32px;
+      padding:8px 19px;
+      cursor:pointer;
+      box-shadow:0 7px 0 rgba(0,0,0,.18);
+    }
+
+    #floraInfoButton:hover{
+      transform:translateY(-2px);
+    }
+
+    #pinPopup{
+      position:fixed;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+      width:min(480px, calc(100vw - 40px));
+      background:rgb(255, 255, 255);
+      color:black;
+      border:5px solid #2b2118;
+      border-radius:16px;
+      padding:20px;
+      display:none;
+      z-index:5000;
+      box-shadow:0 18px 40px rgba(0,0,0,.32);
+      font-size:24px;
+    }
+
+    #pinPopup h2{
+      margin:6px 0 10px;
+      font-size:38px;
+      line-height:1;
+    }
+
+    #pinLevelBadge{
+      display:inline-block;
+      background:#2b2118;
+      color:#fff3b0;
+      border-radius:999px;
+      padding:4px 12px;
+      font-size:22px;
+      margin-bottom:6px;
+    }
+
+    #pinDescription{
+      margin:10px 0 12px;
+      line-height:1.18;
+    }
+
+    #pinWeather{
+      border:3px dashed rgba(43,33,24,.35);
+      border-radius:12px;
+      padding:10px 12px;
+      margin:12px 0;
+      background:rgba(255,248,209,.6);
+      line-height:1.15;
+    }
+
+    #pinPopup button{
+      border:5px solid #2b2118;
+      border-radius:14px;
+      background:#ffd166;
+      color:#2b2118;
+      font-family:"VT323", monospace;
+      font-size:31px;
+      padding:10px 20px;
+      margin:6px 10px 0 0;
+      cursor:pointer;
+      box-shadow:0 7px 0 rgba(0,0,0,.18);
+    }
+
+    #pinPopup button:disabled{
+      background:#d9d9d9;
+      color:#555;
+      cursor:not-allowed;
+    }
+
+    #modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      justify-content:center;
+      align-items:center;
+      background:rgba(0, 0, 0, .18);
+      z-index:9000;
+    }
+
+    #modalContent{
+      width:min(960px, 88%);
+      height:85%;
+      background:white;
+      border:6px solid #2b2118;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      box-shadow:0 18px 42px rgba(0,0,0,.36);
+    }
+
+    #modalFrame{
+      width:100%;
+      height:100%;
+      border:none;
+    }
+
+    #closeModal{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:44px;
+      height:44px;
+      z-index:9999;
+      cursor:pointer;
+      border:4px solid #2b2118;
+      border-radius:12px;
+      background:#fff8d1;
+      font-size:24px;
+      font-weight:800;
+    }
+
+
+
+#settingsButton{
+  position:fixed;
+  top:22px;
+  right:288px;
+  z-index:700;
+  width:76px;
+  height:76px;
+  border:5px solid #2b2118;
+  border-radius:50%;
+  background:rgba(255, 209, 102, .96);
+  color:#2b2118;
+  font-size:42px;
+  line-height:1;
   cursor:pointer;
-  object-fit:contain;
-  transition:.2s;
+  box-shadow:0 8px 0 rgba(0,0,0,.18);
+  transition:.16s ease;
 }
 
-#bottomButtons img:hover{
-  transform:scale(1.08);
+#settingsButton:hover{
+  transform:translateY(-2px) rotate(18deg);
 }
 
-#pinPopup{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:400px;
-  background:rgb(255, 255, 255);
-  color:black;
-  border-radius:12px;
-  padding:20px;
-  display:none;
-  z-index:5000;
+#settingsButton:active{
+  transform:translateY(3px) rotate(18deg);
+  box-shadow:0 3px 0 rgba(0,0,0,.18);
 }
 
-#modal{
+#settingsOverlay{
   position:fixed;
   inset:0;
   display:none;
-  justify-content:center;
   align-items:center;
-  background:rgba(255, 255, 255, 0);
-  z-index:9000;
+  justify-content:center;
+  z-index:9200;
+  background:rgba(0,0,0,.26);
+  backdrop-filter:blur(4px);
 }
 
-#modalContent{
-  width:85%;
-  height:85%;
-  background:white;
-  border-radius:12px;
-  overflow:hidden;
-  position:relative;
+#settingsPanel{
+  width:min(460px, calc(100vw - 36px));
+  background:#fff8d1;
+  border:6px solid #2b2118;
+  border-radius:20px;
+  color:#2b2118;
+  padding:22px;
+  box-shadow:0 18px 42px rgba(0,0,0,.34);
+  font-size:26px;
 }
 
-#modalFrame{
-  width:100%;
-  height:100%;
-  border:none;
+#settingsPanel h2{
+  margin:0 0 14px;
+  font-size:44px;
+  line-height:1;
 }
 
-#closeModal{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:40px;
-  height:40px;
-  z-index:9999;
+.settingsRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin:14px 0;
+  padding:10px 0;
+  border-top:3px dashed rgba(43,33,24,.22);
+}
+
+.settingsRow label{
+  flex:1;
+}
+
+#audioVolume{
+  flex:1;
+  accent-color:#ffd166;
   cursor:pointer;
 }
+
+#settingsPanel button{
+  border:5px solid #2b2118;
+  border-radius:14px;
+  background:#ffd166;
+  color:#2b2118;
+  font-family:"VT323", monospace;
+  font-size:31px;
+  padding:9px 17px;
+  cursor:pointer;
+  box-shadow:0 7px 0 rgba(0,0,0,.18);
+}
+
+#settingsPanel button:hover{
+  transform:translateY(-2px);
+}
+
+#resetProgressSettings{
+  background:#ffadad !important;
+}
+
+    @media (max-width: 900px){
+      #floraPanel{
+        left:22px;
+        right:auto;
+        bottom:202px;
+        width:120px;
+      }
+
+      #mainCharacter{
+        width:122px;
+        max-width:34vw;
+      }
+
+      #floraName{
+        font-size:22px;
+      }
+
+      #floraInfoButton{
+        font-size:24px;
+        padding:6px 15px;
+      }
+
+      #bottomButtons{
+        bottom:18px;
+        right:14px;
+        gap:12px;
+      }
+
+      #bottomButtons img{
+        width:100px;
+        height:100px;
+      }
+
+
+
+#settingsButton{
+  top:18px;
+  right:18px;
+  width:60px;
+  height:60px;
+  font-size:32px;
+}
+
+      #progressHint{
+        top:auto;
+        bottom:20px;
+        left:18px;
+        right:auto;
+        font-size:20px;
+        min-width:160px;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="info">
-    <strong>ApiconIASIS: Bee Wonderer</strong>
+    <strong>apiconIASIS</strong>
     Help us save the bees!
+  </div>
+
+  <div id="progressHint"></div>
+
+
+<button id="settingsButton" type="button" aria-label="Settings">⚙️</button>
+
+<div id="settingsOverlay" aria-hidden="true">
+  <div id="settingsPanel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <h2 id="settingsTitle">Settings</h2>
+    <div class="settingsRow">
+      <span>Music</span>
+      <button id="musicToggle" type="button">ON</button>
+    </div>
+    <div class="settingsRow">
+      <span>Sounds</span>
+      <button id="sfxToggle" type="button">ON</button>
+    </div>
+    <div class="settingsRow">
+      <label for="audioVolume">Volume <span id="audioVolumeLabel">65%</span></label>
+      <input id="audioVolume" type="range" min="0" max="100" value="65">
+    </div>
+    <div class="settingsRow">
+      <span>Progress</span>
+      <button id="resetProgressSettings" type="button">Reset</button>
+    </div>
+    <div class="settingsRow">
+      <span></span>
+      <button id="closeSettings" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+  <div id="floraPanel">
+    <img
+      id="mainCharacter"
+      src="assets/flora-main.png"
+      alt="Flora character">
+    <div id="floraName">Flora</div>
+    <button id="floraInfoButton" type="button">Info</button>
   </div>
 
   <div id="bottomButtons">
 
-  <img
-    id="infoButton"
-    src="assets/info-button.png"
-    alt="Info">
+    <img
+      id="infoButton"
+      src="assets/info-button.png"
+      alt="Info">
 
-  <img
-    id="weatherButton"
-    src="assets/weather-button.png"
-    alt="Weather">
-
-</div>
-
-<div id="pinPopup">
-
-  <h2 id="pinTitle"></h2>
-
-  <p id="pinDescription"></p>
-
-  <button id="playLevelButton">
-    Play
-  </button>
-
-  <button id="closePinPopup">
-    Close
-  </button>
-
-</div>
-
-<div id="modal">
-
-  <div id="modalContent">
-
-    <button id="closeModal">
-      ✕
-    </button>
-
-    <iframe
-      id="modalFrame"
-      src=""
-      frameborder="0">
-    </iframe>
+    <img
+      id="weatherButton"
+      src="assets/weather-button.png"
+      alt="Weather">
 
   </div>
 
-</div>
+  <div id="pinPopup">
+
+    <div id="pinLevelBadge"></div>
+
+    <h2 id="pinTitle"></h2>
+
+    <p id="pinDescription"></p>
+
+    <div id="pinWeather">Weather API loading…</div>
+
+    <button id="playLevelButton">
+      Play
+    </button>
+
+    <button id="closePinPopup">
+      Close
+    </button>
+
+  </div>
+
+  <div id="modal">
+
+    <div id="modalContent">
+
+      <button id="closeModal">
+        ✕
+      </button>
+
+      <iframe
+        id="modalFrame"
+        src=""
+        frameborder="0">
+      </iframe>
+
+    </div>
+
+  </div>
+
+  <script src="assets/audio-manager.js"></script>
+  <script src="assets/lobby-settings.js"></script>
+  <script src="assets/notebook-data.js"></script>
+  <script src="assets/lobby-notebook.js"></script>
+  <script src="assets/bee-book.js"></script>
+  <script src="assets/credits.js"></script>
+  <script src="weather/weather-api.js"></script>
+  <script src="assets/accessibility-helper.js"></script>
 
   <script type="importmap">
     {
@@ -183,67 +515,43 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    const globeMusic = new Audio("levels/blossom.wav");
+    const MAP_IMAGE = 'world-map.png';
+    const RADIUS = 2;
+    const PROGRESS_KEY = "floraUnlockedLevel";
+    const COMPLETED_KEY = "floraCompletedLevels";
 
-    globeMusic.loop = true;
-    globeMusic.volume = 0.3;
-
-    let musicStarted = false;
-
-    document.addEventListener("click", () => {
-
-    if(!musicStarted){
-
-    globeMusic.play()
-      .catch(err => console.log(err));
-
-    musicStarted = true;
+    function playSelect(){
+      if(window.BeeAudio && typeof window.BeeAudio.play === "function"){
+        window.BeeAudio.play("select");
+      }
     }
 
-});
+    if(window.BeeAudio && typeof window.BeeAudio.startMusic === "function"){
+      window.BeeAudio.startMusic();
+    }
 
-    // Η εικόνα που έστειλες είναι ενσωματωμένη εδώ ως data URI.
-    // Σε κανονικό project μπορείς να βάλεις: const MAP_IMAGE = './world-map.png';
-    const MAP_IMAGE = 'world-map.png';
+    const fallbackLocations = [
+      { number: 1, region: "Athens", title: "Level 1 — Athens Hive", subtitle: "Apis mellifera Meadow", bee: "Apis mellifera", lat: 37.9838, lon: 23.7275, mapLat: 37.9838, mapLon: 23.7275, url: "levels/level1.html" },
+      { number: 2, region: "Himalaya", title: "Level 2 — Himalaya Forest", subtitle: "Meliponini Forest", bee: "Meliponini", lat: 27.9881, lon: 86.9250, mapLat: 27.9881, mapLon: 86.9250, url: "levels/level2.html" },
+      { number: 3, region: "Tanzania", title: "Level 3 — Tanzania Carpenter Woods", subtitle: "Xylocopa Carpenter Woods", bee: "Xylocopa violacea", lat: -6.1630, lon: 35.7516, mapLat: -6.1630, mapLon: 35.7516, url: "levels/level3.html" },
+      { number: 4, region: "Uganda", title: "Level 4 — Uganda Aloe Sanctuary", subtitle: "Aloe Carpenter Sanctuary", bee: "Aloe carpenter bee", lat: 0.3476, lon: 32.5825, mapLat: 0.3476, mapLon: 32.5825, url: "levels/level4.html" },
+      { number: 5, region: "New Zealand", title: "Level 5 — New Zealand Native Grove", subtitle: "Leioproctus Native Grove", bee: "Leioproctus", lat: -41.2865, lon: 174.7762, mapLat: -41.2865, mapLon: 174.7762, url: "levels/level5.html" }
+    ];
 
-    const RADIUS = 2;
+    const apiLocations = window.BeeWeather ? window.BeeWeather.levelLocations : fallbackLocations;
+    const originalPinOrder = [1, 2, 3, 4, 5];
 
-    // Άλλαξε / πρόσθεσε σημεία εδώ. lat = γεωγραφικό πλάτος, lon = γεωγραφικό μήκος.
-    const pins = [
-
-   {
-    lat: 37.9838,
-    lon: 23.7275,
-    name: 'Athens',
-    description: 'Apis Mellifera is the most common species of honey bees worldwide!',
-    level: 'levels/level1.html'
-   },
-
-   {
-    lat: 27.9881,
-    lon: 86.9250,
-    name: 'Himalaya',
-    description: 'Προσωρινή τοποθεσία για το επίπεδο 2',
-    level: 'levels/level2.html'
-   },
-
-   {
-    lat: -6.1630,
-    lon: 35.7516,
-    name: 'Tanzania',
-    description: 'Προσωρινή τοποθεσία για το επίπεδο 3',
-    level: 'levels/level3.html'
-   },
-
-   {
-    lat: 0.3476,
-    lon: 32.5825,
-    name: 'Uganda',
-    description: 'Προσωρινή τοποθεσία για το επίπεδο 4',
-    level: 'levels/level4.html'
-   }
-
- ];
+    const pins = originalPinOrder.map(levelNumber => {
+      const location = apiLocations.find(item => item.number === levelNumber) || fallbackLocations.find(item => item.number === levelNumber);
+      return {
+        ...location,
+        lat: Number(location.mapLat ?? location.lat),
+        lon: Number(location.mapLon ?? location.lon),
+        name: location.region,
+        level: location.url,
+        description: `${location.subtitle}. Bee focus: ${location.bee}.`
+      };
+    });
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf6c177);
@@ -298,7 +606,6 @@
     );
     earthGroup.add(globe);
 
-    // Ελαφριά ατμόσφαιρα για πιο 3D αίσθηση.
     const atmosphere = new THREE.Mesh(
       new THREE.SphereGeometry(RADIUS * 1.012, 96, 64),
       new THREE.MeshBasicMaterial({
@@ -311,13 +618,8 @@
     );
     earthGroup.add(atmosphere);
 
-    const redPinMaterial = new THREE.MeshStandardMaterial({
-      color: 0xfe6db6,
-      roughness: 0.45,
-      metalness: 0.05
-    });
-
     pins.forEach((pin) => earthGroup.add(createPin(pin)));
+    updateProgressHint();
 
     window.addEventListener('resize', onResize);
     renderer.setAnimationLoop(animate);
@@ -333,6 +635,60 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    function storageGet(key, fallback){
+      try{
+        const value = localStorage.getItem(key);
+        return value === null ? fallback : value;
+      }
+      catch(error){
+        return fallback;
+      }
+    }
+
+    function storageSet(key, value){
+      try{
+        localStorage.setItem(key, value);
+      }
+      catch(error){
+        // localStorage can be unavailable in some browser/file settings.
+      }
+    }
+
+    function getUnlockedLevel(){
+      const stored = Number(storageGet(PROGRESS_KEY, "1"));
+      const base = Number.isFinite(stored) ? stored : 1;
+      const completedMax = getCompletedLevels().reduce((max, level) => Math.max(max, Number(level) || 0), 0);
+      const value = Math.max(1, Math.min(5, Math.max(base, completedMax + 1)));
+      storageSet(PROGRESS_KEY, String(value));
+      return value;
+    }
+
+    function getCompletedLevels(){
+      try{
+        const parsed = JSON.parse(storageGet(COMPLETED_KEY, "[]"));
+        return Array.isArray(parsed) ? parsed.map(Number) : [];
+      }
+      catch(error){
+        return [];
+      }
+    }
+
+    function getPinState(pin){
+      const unlockedLevel = getUnlockedLevel();
+      const completed = getCompletedLevels().includes(Number(pin.number));
+      const locked = Number(pin.number) > unlockedLevel;
+      return { unlockedLevel, completed, locked };
+    }
+
+    function updateProgressHint(){
+      const unlockedLevel = getUnlockedLevel();
+      const completed = getCompletedLevels();
+      const text = completed.length >= 5
+        ? "All levels cleared!"
+        : `Unlocked: Level ${unlockedLevel}`;
+      document.getElementById("progressHint").textContent = text;
+    }
+
     function loadImage(src) {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -342,7 +698,6 @@
       });
     }
 
-    // Κόβει αυτόματα το μαύρο περιθώριο της εικόνας και τη μετατρέπει σε texture.
     function createCroppedTexture(img) {
       const temp = document.createElement('canvas');
       temp.width = img.width;
@@ -364,7 +719,6 @@
           const b = imageData[i + 2];
           const a = imageData[i + 3];
 
-          // Αγνοούμε σχεδόν μαύρα pixels, δηλαδή το εξωτερικό περιθώριο.
           if (a > 10 && (r > 15 || g > 15 || b > 15)) {
             minX = Math.min(minX, x);
             minY = Math.min(minY, y);
@@ -400,46 +754,49 @@
     }
 
     function createPin(pin) {
+      const state = getPinState(pin);
       const group = new THREE.Group();
       const normal = latLonToVector3(pin.lat, pin.lon, 1).normalize();
+      const materialColor = state.locked ? 0x777777 : state.completed ? 0x57cc99 : 0xfe6db6;
+      const pinMaterial = new THREE.MeshStandardMaterial({
+        color: materialColor,
+        roughness: 0.45,
+        metalness: 0.05
+      });
 
       const coneHeight = 0.22;
       const cone = new THREE.Mesh(
         new THREE.ConeGeometry(0.055, coneHeight, 28),
-        redPinMaterial
+        pinMaterial
       );
 
-      // Το tip του κώνου δείχνει προς την επιφάνεια της υδρογείου.
       cone.quaternion.setFromUnitVectors(
         new THREE.Vector3(0, 1, 0),
         normal.clone().negate()
       );
       cone.position.copy(normal.clone().multiplyScalar(RADIUS + coneHeight / 2));
+      cone.userData = pin;
       group.add(cone);
+      clickablePins.push(cone);
 
       const head = new THREE.Mesh(
-        new THREE.SphereGeometry(0.085, 32, 16),
-        redPinMaterial
+        new THREE.SphereGeometry(state.locked ? 0.075 : 0.095, 32, 16),
+        pinMaterial
       );
-      const label = createLabelSprite(pin.name);
-
-      label.position.copy(
-      normal.clone().multiplyScalar(RADIUS + coneHeight + 0.35)
-      );
-
-      group.add(label);
       head.position.copy(normal.clone().multiplyScalar(RADIUS + coneHeight + 0.045));
-      group.add(head);
-
       head.userData = pin;
+      group.add(head);
       clickablePins.push(head);
 
-      
+      const label = createLabelSprite(pin, state);
+      label.position.copy(normal.clone().multiplyScalar(RADIUS + coneHeight + 0.48));
+      label.userData = pin;
+      group.add(label);
+      clickablePins.push(label);
 
       return group;
     }
 
-    // Μετατροπή latitude/longitude σε θέση πάνω στη SphereGeometry του Three.js.
     function latLonToVector3(lat, lon, radius) {
       const phi = THREE.MathUtils.degToRad(90 - lat);
       const theta = THREE.MathUtils.degToRad(lon + 180);
@@ -451,135 +808,176 @@
       );
     }
 
-    function createLabelSprite(text) {
+    function createLabelSprite(pin, state) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 240;
 
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const ctx = canvas.getContext('2d');
+      const bg = state.locked ? 'rgba(91,91,91,.92)' : state.completed ? 'rgba(69, 173, 104, .94)' : 'rgba(254, 109, 182, .94)';
+      const sub = state.locked ? 'LOCKED' : state.completed ? 'CLEARED' : 'UNLOCKED';
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(0,0,0,.28)';
+      ctx.fillRect(46, 36, 548, 164);
+      ctx.fillStyle = bg;
+      ctx.fillRect(36, 26, 548, 164);
+      ctx.strokeStyle = '#2b2118';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(36, 26, 548, 164);
 
-  ctx.font = 'bold 42px "VT323"';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+      ctx.font = 'bold 58px "VT323"';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#fff8d6';
+      ctx.fillText(`LEVEL ${pin.number}`, 310, 74);
 
-  // απλό arcade text (χωρίς πλαίσιο)
-  ctx.fillStyle = 'rgba(254, 109, 182, 0.95)';
-  ctx.fillText(text, 256, 64);
+      ctx.font = 'bold 38px "VT323"';
+      ctx.fillText(sub, 310, 122);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
+      ctx.font = 'bold 34px "VT323"';
+      ctx.fillText(pin.region, 310, 166);
 
-  const material = new THREE.SpriteMaterial({
-    map: texture,
-    transparent: true
-  });
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
 
-  const sprite = new THREE.Sprite(material);
+      const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true
+      });
 
-  sprite.scale.set(1.4, 0.4, 1);
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(1.48, 0.55, 1);
 
-  return sprite;
-}
+      return sprite;
+    }
+
     window.addEventListener("click", onMouseClick);
 
-function onMouseClick(event){
+    function onMouseClick(event){
+      if(event.target !== renderer.domElement) return;
 
-  mouse.x =
-    (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  mouse.y =
-   -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
 
-  raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(clickablePins);
+      if(hits.length === 0) return;
 
-  const hits =
-    raycaster.intersectObjects(clickablePins);
+      const pin = hits[0].object.userData;
+      openPinPopup(pin);
+    }
 
-  if(hits.length === 0) return;
+    const pinPopup = document.getElementById("pinPopup");
+    const pinLevelBadge = document.getElementById("pinLevelBadge");
+    const pinTitle = document.getElementById("pinTitle");
+    const pinDescription = document.getElementById("pinDescription");
+    const pinWeather = document.getElementById("pinWeather");
+    const playLevelButton = document.getElementById("playLevelButton");
 
-  const pin = hits[0].object.userData;
+    function escapeHtml(value){
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
-  openPinPopup(pin);
-}
+    function openPinPopup(pin){
+      playSelect();
+      const state = getPinState(pin);
+      const statusText = state.locked ? "LOCKED" : state.completed ? "CLEARED" : "UNLOCKED";
 
-const pinPopup =
-  document.getElementById("pinPopup");
+      pinLevelBadge.textContent = `${statusText} · LEVEL ${pin.number}`;
+      pinTitle.textContent = `${pin.title || "Level " + pin.number}`;
 
-const pinTitle =
-  document.getElementById("pinTitle");
+      const lockText = state.locked
+        ? `<br><strong>Unlock:</strong> Clear Level ${pin.number - 1} first.`
+        : "";
 
-const pinDescription =
-  document.getElementById("pinDescription");
+      pinDescription.innerHTML =
+        `${escapeHtml(pin.description)}<br><strong>Pin:</strong> ${escapeHtml(pin.region)}${lockText}`;
 
-const playLevelButton =
-  document.getElementById("playLevelButton");
+      playLevelButton.disabled = state.locked;
+      playLevelButton.textContent = state.locked ? "Locked" : `Play Level ${pin.number}`;
+      playLevelButton.onclick = state.locked ? null : () => {
+        playSelect();
+        window.location.href = pin.level;
+      };
 
-function openPinPopup(pin){
+      pinWeather.textContent = "Weather API loading…";
+      loadPinWeather(pin);
 
-  pinTitle.textContent =
-    pin.name;
+      pinPopup.style.display = "block";
+    }
 
-  pinDescription.textContent =
-    pin.description;
+    async function loadPinWeather(pin){
+      if(!window.BeeWeather){
+        pinWeather.textContent = "Weather API is not available.";
+        return;
+      }
 
-  playLevelButton.onclick = () => {
+      try{
+        const weather = await window.BeeWeather.getCurrentWeather(pin);
+        pinWeather.innerHTML =
+          `<strong>API Weather:</strong> ${escapeHtml(weather.description)} (${escapeHtml(weather.conditionLabel)})<br>` +
+          `🌡 ${escapeHtml(window.BeeWeather.formatTemperature(weather.temperature))} · ` +
+          `🌬 ${escapeHtml(window.BeeWeather.formatWind(weather.windSpeed))}<br>` +
+          `<strong>Weather data:</strong> Open-Meteo · CC BY 4.0<br>` +
+          `<strong>Level:</strong> uses the selected PNG background.`;
+      }
+      catch(error){
+        pinWeather.textContent = "Weather API failed. The level still uses its selected PNG background.";
+      }
+    }
 
-    window.location.href =
-      pin.level;
+    document
+      .getElementById("closePinPopup")
+      .addEventListener("click", () => {
+        playSelect();
+        pinPopup.style.display = "none";
+      });
 
-  };
+    const modal = document.getElementById("modal");
+    const modalFrame = document.getElementById("modalFrame");
 
-  pinPopup.style.display = "block";
-}
+    function openModal(src){
+      modalFrame.src = src;
+      modal.style.display = "flex";
+    }
 
-document
-.getElementById("closePinPopup")
-.addEventListener("click", () => {
+    document
+      .getElementById("infoButton")
+      .addEventListener("click", () => {
+        playSelect();
+        openModal("info.html");
+      });
 
-  pinPopup.style.display = "none";
+    document
+      .getElementById("floraInfoButton")
+      .addEventListener("click", () => {
+        playSelect();
+        openModal("info.html");
+      });
 
-});
+    document
+      .getElementById("weatherButton")
+      .addEventListener("click", () => {
+        playSelect();
+        openModal("weather/weather.html");
+      });
 
-const modal =
-  document.getElementById("modal");
+    document
+      .getElementById("closeModal")
+      .addEventListener("click", () => {
+        playSelect();
+        modal.style.display = "none";
+        modalFrame.src = "";
+      });
 
-const modalFrame =
-  document.getElementById("modalFrame");
-
-document
-.getElementById("infoButton")
-.addEventListener("click", () => {
-
-  modalFrame.src =
-    "info.html";
-
-  modal.style.display = "flex";
-
-});
-
-document
-.getElementById("weatherButton")
-.addEventListener("click", () => {
-
-  modalFrame.src =
-    "weather/weather.html";
-
-  modal.style.display = "flex";
-
-});
-
-document
-.getElementById("closeModal")
-.addEventListener("click", () => {
-
-  modal.style.display = "none";
-
-  modalFrame.src = "";
-
-});
   </script>
 </body>
 </html>
