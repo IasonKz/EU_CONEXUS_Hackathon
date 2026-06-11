@@ -48,6 +48,14 @@ Used for the bounce mushroom sound effect:
 Credit: Sound Effect by floraphonic from Pixabay.
 Source: https://pixabay.com/users/floraphonic-38928062/
 
+### Pixabay sound effect — freesound_community
+
+Used for Flora's jump sound effect:
+
+- `freesound_community-cartoon-jump-6462.mp3`
+
+Credit: Sound Effect by freesound_community from Pixabay.
+
 ## Visual assets
 
 Flora, level bees, Zombees, hives, backgrounds, platforms, ground, thorns, rocks, logs, mushrooms, book icon, and UI icons: project-team pixel art / collaborator-supplied assets for this hackathon build.

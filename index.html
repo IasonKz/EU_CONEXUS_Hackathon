@@ -3,12 +3,177 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=globe_3d_pins.html">
   <title>ApiconIASIS: Bee Wanderer</title>
-    <link rel="icon" type="image/png" href="assets/flora-main.png">
-  <script>window.location.replace('globe_3d_pins.html');</script>
+  <link rel="icon" type="image/png" href="assets/flora-main.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    :root{
+      --panel:#f5dcab;
+      --pink:#fe6db6;
+      --green:#55602a;
+      --text:#31424a;
+      --ink:#2b2118;
+      --cream:#fff8d1;
+      --gold:#ffd166;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,
+    body{
+      margin:0;
+      width:100%;
+      min-height:100%;
+      font-family:"VT323", monospace;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.35) 0 70px, transparent 72px),
+        radial-gradient(circle at 82% 22%, rgba(255,255,255,.28) 0 95px, transparent 98px),
+        linear-gradient(180deg, #a8d8f0 0%, #f6c177 100%);
+      color:var(--text);
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      overflow:hidden;
+    }
+
+    .startCard{
+      width:min(980px, calc(100vw - 36px));
+      position:relative;
+      background:var(--panel);
+      border:6px solid #ffe7bd;
+      border-radius:18px;
+      padding:38px 36px 42px;
+      text-align:center;
+      box-shadow:
+        0 0 0 5px rgba(254,109,182,.32),
+        0 24px 48px rgba(43,33,24,.26);
+    }
+
+    .startCard::before,
+    .startCard::after{
+      content:"";
+      position:absolute;
+      width:120px;
+      height:70px;
+      top:-38px;
+      background:#fff8d1;
+      border:5px solid #ffe7bd;
+      border-radius:999px 999px 24px 24px;
+      box-shadow:0 0 0 4px rgba(254,109,182,.16);
+      opacity:.88;
+      z-index:-1;
+    }
+
+    .startCard::before{ left:38px; transform:rotate(-8deg); }
+    .startCard::after{ right:38px; transform:rotate(8deg); }
+
+    h1{
+      margin:0 0 8px;
+      color:white;
+      font-size:clamp(72px, 10vw, 132px);
+      line-height:.78;
+      letter-spacing:.02em;
+      text-shadow:4px 4px 0 var(--pink);
+    }
+
+    .subtitle{
+      margin:0 0 22px;
+      color:var(--green);
+      font-size:clamp(42px, 6vw, 76px);
+      line-height:.9;
+      text-shadow:2px 2px 0 rgba(255,255,255,.75);
+    }
+
+    .tagline{
+      margin:0 auto 30px;
+      max-width:720px;
+      color:var(--text);
+      font-size:clamp(30px, 3vw, 42px);
+      line-height:1.02;
+    }
+
+    #playStart{
+      border:6px solid var(--ink);
+      border-radius:18px;
+      background:var(--gold);
+      color:var(--ink);
+      font-family:"VT323", monospace;
+      font-size:clamp(46px, 6vw, 72px);
+      line-height:.9;
+      padding:16px 58px 18px;
+      cursor:pointer;
+      box-shadow:0 10px 0 rgba(0,0,0,.20);
+      transition:.16s ease;
+      text-transform:uppercase;
+    }
+
+    #playStart:hover{ transform:translateY(-3px) rotate(-1deg); }
+    #playStart:active{ transform:translateY(6px) rotate(-1deg); box-shadow:0 4px 0 rgba(0,0,0,.20); }
+
+    .hint{
+      margin-top:20px;
+      color:var(--pink);
+      font-size:28px;
+      line-height:1;
+    }
+
+    .floraPixel{
+      position:absolute;
+      left:28px;
+      bottom:-20px;
+      width:118px;
+      image-rendering:pixelated;
+      filter:drop-shadow(0 10px 0 rgba(0,0,0,.14));
+    }
+
+    @media (max-width:720px){
+      .startCard{ padding:34px 22px 36px; }
+      .floraPixel{ width:86px; left:12px; bottom:-16px; opacity:.82; }
+      .hint{ font-size:23px; }
+    }
+  </style>
 </head>
 <body>
-  <p><a href="globe_3d_pins.html">Open Bee Wonderer lobby</a></p>
+  <main class="startCard" aria-labelledby="gameTitle">
+    <img class="floraPixel" src="assets/flora-main.png" alt="" aria-hidden="true">
+    <h1 id="gameTitle">ApiconIASIS</h1>
+    <div class="subtitle">Bee Wanderer</div>
+    <p class="tagline">Help Flora start the cure mission and save the bees around the world.</p>
+    <button id="playStart" type="button">PLAY</button>
+    <div class="hint">Press PLAY to enter the globe lobby</div>
+  </main>
+
+  <script src="assets/audio-manager.js"></script>
+  <script>
+    (function(){
+      "use strict";
+      const button = document.getElementById("playStart");
+
+      function playSelect(){
+        if(window.BeeAudio && typeof window.BeeAudio.play === "function"){
+          window.BeeAudio.play("select");
+        }
+      }
+
+      function enterLobby(){
+        playSelect();
+        window.location.href = "globe_3d_pins.html";
+      }
+
+      button.addEventListener("click", enterLobby);
+      document.addEventListener("keydown", event => {
+        if(event.key === "Enter" || event.code === "Space" || event.key === " "){
+          event.preventDefault();
+          enterLobby();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

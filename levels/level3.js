@@ -72,7 +72,8 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 2460,
+      "x": 2325,
+      "rise": 150,
       "name": "Xylocopa",
       "accent": "#b98bff",
       "lines": [

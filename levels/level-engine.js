@@ -383,7 +383,7 @@ document.addEventListener("keydown", e => {
 
         player.velY = -15;
         player.jumping = true;
-        playAudioCue("select");
+        playAudioCue("jump");
     }
 
     if(
@@ -508,8 +508,8 @@ const LEVEL_LAYOUTS = {
             {x: 2860, width: 118, power: -18.9}
         ],
         collectibles: [
-            {id: "star-1", x: 795, rise: 220},
-            {id: "star-2", x: 2365, rise: 220},
+            {id: "star-1", x: 980, rise: 220},
+            {id: "star-2", x: 2445, rise: 220},
             {id: "star-3", x: 3230, rise: 292}
         ],
         enemySpecs: [
@@ -544,7 +544,7 @@ const LEVEL_LAYOUTS = {
         ],
         collectibles: [
             {id: "star-1", x: 930, rise: 242},
-            {id: "star-2", x: 2320, rise: 212},
+            {id: "star-2", x: 2435, rise: 212},
             {id: "star-3", x: 3890, rise: 246}
         ],
         enemySpecs: [
@@ -688,11 +688,15 @@ function buildLevelGeometry(){
     npcs = (LEVEL_CONFIG.npcs || []).map((npc, index) => {
         const npcWidth = 104;
         const npcHeight = 104;
-        const top = findStandingTop(npc.x, npcWidth, true) ?? groundY;
+        const explicitY = Number.isFinite(Number(npc.y)) ? Number(npc.y) : null;
+        const explicitTop = Number.isFinite(Number(npc.rise)) ? groundY - Number(npc.rise) : null;
+        const top = explicitY !== null
+            ? explicitY + npcHeight
+            : explicitTop ?? findStandingTop(npc.x, npcWidth, true) ?? groundY;
         return {
             ...npc,
             id: npc.name + "-" + index,
-            y: top - npcHeight,
+            y: explicitY ?? top - npcHeight,
             width: npcWidth,
             height: npcHeight,
             completed: completedNpcIds.has(npc.name + "-" + index)

@@ -72,7 +72,8 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 2520,
+      "x": 2310,
+      "rise": 145,
       "name": "Aloe Carpenter",
       "accent": "#ffd166",
       "lines": [
