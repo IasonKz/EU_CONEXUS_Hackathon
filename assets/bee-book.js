@@ -6,79 +6,169 @@
       title: "How do I play?",
       tag: "Controls",
       question: "What should Flora do in each level?",
-      answer: "Move right, collect all 3 stars, jump over thorn hazards, avoid Zombees, talk to the level bee, and then reach the hive. The level only ends after Flora has all three stars."
+      answer: "Move right, collect the 3 cure ingredients, avoid Zombees and thorns, talk to the level bee, and deliver the Healing Nectar to the hive."
     },
     {
       title: "What is apiconIASIS?",
       tag: "Story",
       question: "Why is Flora travelling?",
-      answer: "apiconIASIS is the game's bee-health mission. Flora travels between hives, learns from different bees, and delivers a cure before infection spreads."
+      answer: "apiconIASIS is the game's bee-health mission. Flora travels between hives, learns from different bees, and carries the cure before infection spreads."
     },
     {
       title: "Who is Flora?",
       tag: "Hero",
       question: "Who is the main character?",
-      answer: "Flora is the bee wanderer. She carries the cure, records discoveries in her notebook, and helps each hive recover."
+      answer: "Flora is the bee wanderer. She gathers cure ingredients, records discoveries in her notebook, and helps each hive recover."
     },
     {
-      title: "What is a Zombee?",
-      tag: "Enemy",
-      question: "Are the enemies insects or bees?",
-      answer: "The moving enemies are only sick bees called Zombees. They are infected by foulbrood, so Flora must avoid contact until the cure reaches the hive."
+      title: "Cure ingredients",
+      tag: "Gameplay",
+      question: "What must Flora collect before the hive?",
+      answer: "Flora now collects DNA Pollen, Enzyme Drops, and Purification Beads. Together they complete the Healing Nectar before she enters the hive."
+    },
+    {
+      title: "DNA Pollen",
+      tag: "Cure lab",
+      question: "What does DNA Pollen represent?",
+      answer: "It represents the genetic recipe: the DNA instructions that tell a cell which useful enzyme or protein to make."
+    },
+    {
+      title: "Enzyme Drop",
+      tag: "Cure lab",
+      question: "Why is the enzyme important?",
+      answer: "An enzyme is a protein that can speed up a specific chemical reaction. In the story, it is the active ingredient Flora needs for the cure."
+    },
+    {
+      title: "Purification Bead",
+      tag: "Cure lab",
+      question: "Why purify the cure ingredient?",
+      answer: "Cells make many proteins at the same time. Purification separates the useful enzyme from the rest, like sorting one bead from a mixed jar."
+    },
+    {
+      title: "Gene to enzyme",
+      tag: "Biotech",
+      question: "How is the cure made in the game science?",
+      answer: "A DNA construct enters bacteria, the bacteria produce the enzyme, and scientists break the cells open and purify the enzyme for the final mixture."
+    },
+    {
+      title: "Why bacteria?",
+      tag: "Biotech",
+      question: "Why use bacteria as tiny factories?",
+      answer: "Bacteria such as E. coli can grow quickly and can be given DNA instructions, so they are useful model systems for producing proteins in a lab."
     },
     {
       title: "What is foulbrood?",
       tag: "Bee disease",
       question: "Why is the infection dangerous?",
-      answer: "Foulbrood is a serious brood disease that can weaken or destroy a hive if it spreads. In the game, it is represented by Zombees and contaminated routes."
+      answer: "Foulbrood is a serious brood disease: it attacks young bees and can weaken or destroy a colony if it spreads through the hive."
+    },
+    {
+      title: "Zombees",
+      tag: "Disease spread",
+      question: "Are Zombees villains?",
+      answer: "No. They are sick bees in the story. Flora avoids contact because disease can spread before the Healing Nectar reaches the hive."
+    },
+    {
+      title: "Real hive care",
+      tag: "Teacher note",
+      question: "Is the game a real treatment protocol?",
+      answer: "No. The game turns disease control into a learning quest; real suspected foulbrood needs fast expert action, local rules, and careful hive management."
     },
     {
       title: "Apis mellifera",
       tag: "Level 1",
       question: "What does the Athens bee teach?",
-      answer: "Apis mellifera, the western honey bee, lives in a structured colony. Workers, drones, and the queen all support the hive."
+      answer: "Apis mellifera, the western honey bee, lives in a structured colony with queen, workers, and drones that share tasks."
     },
     {
       title: "Meliponini",
       tag: "Level 2",
       question: "What makes stingless bees special?",
-      answer: "Meliponini are stingless social bees. They defend their nest with teamwork, resin, quick movement, and strong colony behavior."
+      answer: "Meliponini are social stingless bees. They defend nests with teamwork, resin, nest guards, and quick movement rather than a true sting."
     },
     {
       title: "Xylocopa",
       tag: "Level 3",
-      question: "Why do carpenter bees need dead wood?",
-      answer: "Many carpenter bees nest in dry or dead wood. Leaving some safe dead wood in nature can protect important wild bee habitat."
+      question: "Why do carpenter bees need wood?",
+      answer: "Many carpenter bees tunnel into dry or dead wood to nest. Leaving safe dead wood can protect important wild bee homes."
     },
     {
       title: "Aloe carpenter bee",
       tag: "Level 4",
       question: "Why do specialist bees matter?",
-      answer: "Specialist bees may depend on specific plants or habitats. If those plants disappear, the bee can lose food, nesting material, or both."
+      answer: "Specialist bees may depend on a small set of plants or habitats. If those disappear, the bee may lose food or nesting material."
     },
     {
       title: "Leioproctus",
       tag: "Level 5",
       question: "What does the New Zealand bee teach?",
-      answer: "Leioproctus represents New Zealand native bees. Many native bees are solitary and need safe soil, wild flowers, and protected habitats."
+      answer: "Leioproctus is a common New Zealand native bee group. New Zealand has about 28 native bee species; many are solitary and need safe soil and native flowers."
     },
     {
-      title: "Three stars",
-      tag: "Gameplay",
-      question: "Why do I need stars?",
-      answer: "Each level has 3 stars. Flora must collect all of them before entering the hive. If she dies, the stars are lost and must be collected again."
+      title: "Hylaeus",
+      tag: "NZ bees",
+      question: "How can a masked bee be recognized?",
+      answer: "Hylaeus bees are often slender and dark with pale face or thorax marks. Many nest in hollow stems, twigs, or insect holes."
     },
     {
-      title: "Weather Station",
-      tag: "Live data",
-      question: "Why is weather included?",
-      answer: "Weather affects bee activity. Temperature, wind, rain, and humidity can change when bees forage and how safely colonies work."
+      title: "Lasioglossum",
+      tag: "NZ bees",
+      question: "What is special about these small bees?",
+      answer: "Lasioglossum bees can be very small and may nest in soil. Some species show simple social behavior with a few females in one nest."
+    },
+    {
+      title: "Bee diversity",
+      tag: "Ecology",
+      question: "Why learn more than one bee species?",
+      answer: "Different bees pollinate different plants and need different homes. Protecting bee diversity protects ecosystems, crops, and wild flowers."
+    },
+    {
+      title: "Temperature",
+      tag: "Weather",
+      question: "How does temperature affect bees?",
+      answer: "Cool weather can slow flight and foraging. Warm weather can help activity, but extreme heat can stress bees and dry flowers."
+    },
+    {
+      title: "Wind and rain",
+      tag: "Weather",
+      question: "Why are windy or rainy days difficult?",
+      answer: "Strong wind makes flying costly and risky. Rain can keep bees inside, so less nectar and pollen may enter the hive that day."
+    },
+    {
+      title: "Humidity and drought",
+      tag: "Weather",
+      question: "How can water conditions change production?",
+      answer: "Plants need suitable water to make nectar. Drought, heat, or very wet weather can reduce flower rewards and change honey production."
+    },
+    {
+      title: "Honey production",
+      tag: "Beekeeping",
+      question: "What connects weather to honey?",
+      answer: "Honey starts with nectar. Good flowering, safe flight weather, and healthy workers give the colony more chances to collect and store it."
+    },
+    {
+      title: "Hive hygiene",
+      tag: "Beekeeping",
+      question: "What classroom rule matches hive care?",
+      answer: "Do not spread contamination. Beekeepers inspect brood, clean tools, and act quickly when disease signs appear."
+    },
+    {
+      title: "Habitat support",
+      tag: "Conservation",
+      question: "How can people help bees outside the hive?",
+      answer: "Plant varied flowers, protect soil and nesting wood, reduce unnecessary pesticides, and leave safe natural patches for wild bees."
+    },
+    {
+      title: "Using weather data",
+      tag: "Teacher prompt",
+      question: "How could a beekeeper use the Weather Station?",
+      answer: "Students can compare temperature, wind, rain, and cloud cover, then predict whether bees will forage, rest, or need extra care."
     },
     {
       title: "Notebook unlocks",
       tag: "Progress",
-      question: "How do achievements unlock?",
-      answer: "Flora's Notebook unlocks a page after each cleared level. Each page stores the level bee, learned facts, NPC dialogue, and the achievement."
+      question: "What does Flora's Notebook record?",
+      answer: "It stores each cleared level, the bee species, learned facts, NPC dialogue, weather context, and the Cure Lab explanation."
     },
     {
       title: "Pin colors",

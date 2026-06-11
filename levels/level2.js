@@ -26,7 +26,7 @@ window.LEVEL_CONFIG = {
   },
   "intro": {
     "title": "Forest Mission",
-    "text": "Flora enters a denser forest path. Collect all 3 stars, use rocks, logs, lifts, and bounce mushrooms, listen to Meliponini, and reach the hive safely."
+    "text": "Flora enters a denser forest path. Collect the 3 cure ingredients, use rocks, logs, lifts, and bounce mushrooms, listen to Meliponini, and reach the hive safely."
   },
   "palette": {
     "skyTop": "#a7a9d8",
@@ -63,7 +63,7 @@ window.LEVEL_CONFIG = {
   ],
   "npcs": [
     {
-      "x": 500,
+      "x": 440,
       "name": "Meliponini",
       "accent": "#90be6d",
       "lines": [
@@ -72,7 +72,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 1510,
+      "x": 2380,
       "name": "Meliponini",
       "accent": "#90be6d",
       "lines": [
@@ -81,7 +81,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 3060,
+      "x": 4520,
       "name": "Meliponini",
       "accent": "#90be6d",
       "lines": [

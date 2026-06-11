@@ -26,7 +26,7 @@ window.LEVEL_CONFIG = {
   },
   "intro": {
     "title": "Aloe Sanctuary Mission",
-    "text": "The route is hotter and more dangerous. Collect all 3 stars, use bounce mushrooms, avoid thorn patches and infected bees, then reach the hive."
+    "text": "The route is hotter and more dangerous. Collect the 3 cure ingredients, use bounce mushrooms, avoid thorn patches and infected bees, then reach the hive."
   },
   "palette": {
     "skyTop": "#ff8678",
@@ -63,16 +63,16 @@ window.LEVEL_CONFIG = {
   ],
   "npcs": [
     {
-      "x": 520,
+      "x": 460,
       "name": "Aloe Carpenter",
       "accent": "#ffd166",
       "lines": [
-        "Welcome to the last mission, Flora. Dry habitats may look empty, but many specialist bees depend on them.",
+        "Welcome to the Uganda mission, Flora. Dry habitats may look empty, but many specialist bees depend on them.",
         "Watch the rock and log obstacles and use the bounce mushrooms. The sick bees are faster here."
       ]
     },
     {
-      "x": 1510,
+      "x": 2520,
       "name": "Aloe Carpenter",
       "accent": "#ffd166",
       "lines": [
@@ -81,11 +81,11 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 3060,
+      "x": 4540,
       "name": "Aloe Carpenter",
       "accent": "#ffd166",
       "lines": [
-        "The hive is near. Deliver the cure with all 3 stars and Flora’s notebook will complete this recovery page.",
+        "The hive is near. Deliver the cure with all 3 cure ingredients and Flora’s notebook will complete this recovery page.",
         "After the hive, you will return to the lobby automatically."
       ]
     }

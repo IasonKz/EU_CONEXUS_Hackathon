@@ -132,8 +132,13 @@ const levelWidth = 5000;
 const PLATFORM_IMAGE_RATIO = 110 / 704;
 const MUSHROOM_FRAME_COUNT = 5;
 const MUSHROOM_FRAME_RATIO = 292 / (2048 / MUSHROOM_FRAME_COUNT);
-const THORN_IMAGE_RATIO = 345 / 720;
+const THORN_IMAGE_RATIO = 0.30;
 const STAR_TARGET = 3;
+const CURE_COLLECTIBLES = [
+    {type: "dna-pollen", name: "DNA Pollen", shortName: "DNA"},
+    {type: "enzyme-drop", name: "Enzyme Drop", shortName: "Enzyme"},
+    {type: "purification-bead", name: "Purification Bead", shortName: "Bead"}
+];
 
 let cameraX = 0;
 let topFactTimer = null;
@@ -149,7 +154,7 @@ let weatherState = {
 let weatherParticles = [];
 let weatherParticleCondition = "";
 
-const CONTROL_HINT = "← → Move | SPACE/↑ Jump | collect 3 stars | use lifts and bounce mushrooms | R Restart | 🌍 Lobby";
+const CONTROL_HINT = "← → Move | SPACE/↑ Jump | collect 3 cure ingredients | use lifts and bounce mushrooms | R Restart | 🌍 Lobby";
 
 function playAudioCue(name){
     if(window.BeeAudio && typeof window.BeeAudio.play === "function"){
@@ -370,212 +375,171 @@ let goal = null;
 
 const LEVEL_LAYOUTS = {
     1: {
-        ground: [[0, 780], [880, 1450], [1580, 2200], [2360, 3040], [3180, 3820], [4000, 5000]],
+        // Meadow tutorial: readable spacing, one simple jump section, and a high platform cure ingredient.
+        ground: [[0, 5000]],
         platforms: [
-            {x: 620, rise: 105, width: 230},
-            {x: 1050, rise: 138, width: 230},
-            {x: 1460, rise: 105, width: 220},
-            {x: 2050, rise: 130, width: 235},
-            {x: 2540, rise: 164, width: 240, style: "lift", move: {axis: "y", distance: 76, speed: 1.35, phase: 0.4}},
-            {x: 2870, rise: 105, width: 230},
-            {x: 3480, rise: 150, width: 240, style: "lift", move: {axis: "x", distance: 118, speed: 1.0, phase: 1.2}},
-            {x: 3880, rise: 132, width: 240},
-            {x: 4430, rise: 112, width: 290}
+            {x: 900, rise: 158, width: 270},
+            {x: 1580, rise: 126, width: 280, style: "lift", move: {axis: "y", distance: 42, speed: 0.86, phase: 0.2}},
+            {x: 2360, rise: 178, width: 270},
+            {x: 3300, rise: 142, width: 290},
+            {x: 4100, rise: 118, width: 310}
         ],
         blockers: [
-            {x: 675, rise: 60, width: 98, height: 90, style: "rock"},
-            {x: 1160, rise: 60, width: 92, height: 112, style: "log"},
-            {x: 1860, rise: 60, width: 104, height: 96, style: "rock"},
-            {x: 3145, rise: 60, width: 92, height: 116, style: "log"},
-            {x: 3450, rise: 60, width: 106, height: 98, style: "rock"}
+            {x: 690, rise: 60, width: 96, height: 84, style: "rock"},
+            {x: 2190, rise: 60, width: 96, height: 112, style: "log"}
         ],
         hazards: [
-            {x: 960, width: 112, type: "thorn"},
-            {x: 1970, width: 120, type: "thorn"},
-            {x: 2770, width: 118, type: "thorn"},
-            {x: 4210, width: 132, type: "thorn"}
+            {x: 1180, width: 86, type: "thorn"},
+            {x: 2920, width: 92, type: "thorn"}
         ],
         bouncePads: [
-            {x: 1348, width: 118, power: -18.3},
-            {x: 2970, width: 120, power: -18.6}
+            {x: 2620, width: 118, power: -18.2}
         ],
         collectibles: [
-            {id: "star-1", x: 760, rise: 154},
-            {id: "star-2", x: 2220, rise: 218},
-            {id: "star-3", x: 3890, rise: 196}
+            {id: "star-1", x: 955, rise: 225},
+            {id: "star-2", x: 2440, rise: 246},
+            {id: "star-3", x: 3440, rise: 210}
         ],
         enemySpecs: [
-            {x: 1120, min: 980, max: 1320, speed: 2.0, width: 62, height: 52},
-            {x: 2620, min: 2430, max: 2920, speed: 2.2, width: 62, height: 52},
-            {x: 4320, min: 4140, max: 4620, speed: 2.15, width: 62, height: 52}
+            {x: 1760, min: 1670, max: 2040, speed: 1.55, width: 60, height: 50},
+            {x: 3860, min: 3660, max: 4240, speed: 1.65, width: 60, height: 50}
         ]
     },
     2: {
-        ground: [[0, 760], [850, 1360], [1520, 2080], [2260, 2860], [3040, 3600], [3780, 5000]],
+        // Mountain route: broken ground, a vertical lift, and a log-to-platform climb.
+        ground: [[0, 980], [1160, 2020], [2220, 3180], [3380, 5000]],
         platforms: [
-            {x: 610, rise: 112, width: 225},
-            {x: 1010, rise: 154, width: 230},
-            {x: 1380, rise: 112, width: 225},
-            {x: 1890, rise: 176, width: 240, style: "lift", move: {axis: "y", distance: 96, speed: 1.22, phase: 0.1}},
-            {x: 2440, rise: 132, width: 240},
-            {x: 2850, rise: 185, width: 235, style: "lift", move: {axis: "x", distance: 135, speed: 0.95, phase: 0.9}},
-            {x: 3300, rise: 142, width: 235},
-            {x: 3690, rise: 118, width: 235},
-            {x: 4250, rise: 132, width: 300}
+            {x: 780, rise: 170, width: 250},
+            {x: 1420, rise: 135, width: 260},
+            {x: 2060, rise: 205, width: 245, style: "lift", move: {axis: "y", distance: 62, speed: 0.90, phase: 0.1}},
+            {x: 2860, rise: 172, width: 270},
+            {x: 3760, rise: 190, width: 260},
+            {x: 4320, rise: 130, width: 300}
         ],
         blockers: [
-            {x: 650, rise: 60, width: 98, height: 94, style: "rock"},
-            {x: 1180, rise: 60, width: 92, height: 116, style: "log"},
-            {x: 2360, rise: 60, width: 106, height: 100, style: "rock"},
-            {x: 3150, rise: 60, width: 92, height: 118, style: "log"},
-            {x: 3940, rise: 60, width: 108, height: 102, style: "rock"}
+            {x: 590, rise: 60, width: 96, height: 86, style: "rock"},
+            {x: 2560, rise: 60, width: 98, height: 116, style: "log"},
+            {x: 3560, rise: 60, width: 98, height: 88, style: "rock"}
         ],
         hazards: [
-            {x: 940, width: 132, type: "thorn"},
-            {x: 1800, width: 140, type: "thorn"},
-            {x: 3330, width: 142, type: "thorn"},
-            {x: 4210, width: 132, type: "thorn"}
+            {x: 1260, width: 88, type: "thorn"},
+            {x: 3440, width: 94, type: "thorn"}
         ],
         bouncePads: [
-            {x: 1262, width: 120, power: -18.8},
-            {x: 2782, width: 122, power: -19.0}
+            {x: 1760, width: 118, power: -18.6}
         ],
         collectibles: [
-            {id: "star-1", x: 790, rise: 160},
-            {id: "star-2", x: 1980, rise: 250},
-            {id: "star-3", x: 3500, rise: 198}
+            {id: "star-1", x: 820, rise: 238},
+            {id: "star-2", x: 2110, rise: 282},
+            {id: "star-3", x: 3830, rise: 258}
         ],
         enemySpecs: [
-            {x: 1100, min: 960, max: 1300, speed: 2.25, width: 64, height: 52},
-            {x: 2570, min: 2380, max: 2800, speed: 2.45, width: 64, height: 52},
-            {x: 4050, min: 3860, max: 4400, speed: 2.18, width: 64, height: 52}
+            {x: 1520, min: 1380, max: 1840, speed: 1.65, width: 62, height: 50},
+            {x: 3980, min: 3820, max: 4240, speed: 1.75, width: 62, height: 50}
         ]
     },
     3: {
-        ground: [[0, 760], [860, 1320], [1460, 2020], [2200, 2840], [3020, 3580], [3760, 5000]],
+        // Forest route: island sections and a horizontal lift, with rocks/logs used as clear stepping points.
+        ground: [[0, 860], [1040, 1660], [1880, 2560], [2780, 3520], [3740, 5000]],
         platforms: [
-            {x: 620, rise: 112, width: 230},
-            {x: 980, rise: 158, width: 230},
-            {x: 1350, rise: 116, width: 225},
-            {x: 1900, rise: 185, width: 240, style: "lift", move: {axis: "y", distance: 104, speed: 1.15, phase: 0.6}},
-            {x: 2440, rise: 136, width: 245},
-            {x: 2860, rise: 190, width: 235, style: "lift", move: {axis: "x", distance: 148, speed: 0.9, phase: 0.3}},
-            {x: 3330, rise: 148, width: 240},
-            {x: 3730, rise: 118, width: 240},
-            {x: 4300, rise: 132, width: 300}
+            {x: 760, rise: 152, width: 255},
+            {x: 1540, rise: 190, width: 260, style: "lift", move: {axis: "x", distance: 95, speed: 0.78, phase: 0.7}},
+            {x: 2300, rise: 150, width: 270},
+            {x: 3160, rise: 218, width: 250, style: "lift", move: {axis: "y", distance: 58, speed: 0.88, phase: 0.2}},
+            {x: 4240, rise: 144, width: 300}
         ],
         blockers: [
-            {x: 675, rise: 60, width: 102, height: 96, style: "rock"},
-            {x: 1140, rise: 60, width: 94, height: 118, style: "log"},
-            {x: 2320, rise: 60, width: 108, height: 104, style: "rock"},
-            {x: 3170, rise: 60, width: 94, height: 118, style: "log"},
-            {x: 3960, rise: 60, width: 108, height: 102, style: "rock"}
+            {x: 1120, rise: 60, width: 96, height: 114, style: "log"},
+            {x: 2040, rise: 60, width: 104, height: 90, style: "rock"},
+            {x: 3960, rise: 60, width: 96, height: 114, style: "log"}
         ],
         hazards: [
-            {x: 1000, width: 120, type: "thorn"},
-            {x: 1760, width: 132, type: "thorn"},
-            {x: 2540, width: 138, type: "thorn"},
-            {x: 4080, width: 132, type: "thorn"}
+            {x: 1900, width: 90, type: "thorn"},
+            {x: 3560, width: 96, type: "thorn"}
         ],
         bouncePads: [
-            {x: 1258, width: 120, power: -18.8},
-            {x: 2810, width: 122, power: -19.0}
+            {x: 1380, width: 118, power: -18.7},
+            {x: 2860, width: 118, power: -18.9}
         ],
         collectibles: [
-            {id: "star-1", x: 800, rise: 164},
-            {id: "star-2", x: 1965, rise: 262},
-            {id: "star-3", x: 3505, rise: 210}
+            {id: "star-1", x: 795, rise: 220},
+            {id: "star-2", x: 2365, rise: 220},
+            {id: "star-3", x: 3230, rise: 292}
         ],
         enemySpecs: [
-            {x: 1120, min: 960, max: 1280, speed: 2.15, width: 64, height: 52},
-            {x: 2480, min: 2260, max: 2760, speed: 2.35, width: 64, height: 52},
-            {x: 4050, min: 3840, max: 4400, speed: 2.2, width: 64, height: 52}
+            {x: 1280, min: 1160, max: 1500, speed: 1.55, width: 62, height: 50},
+            {x: 4100, min: 3920, max: 4380, speed: 1.75, width: 62, height: 50}
         ]
     },
     4: {
-        ground: [[0, 760], [860, 1320], [1480, 2040], [2220, 2860], [3040, 3600], [3780, 5000]],
+        // Aloe sanctuary: more vertical movement, but no cluttered obstacle stacks.
+        ground: [[0, 1080], [1260, 2180], [2400, 3300], [3500, 5000]],
         platforms: [
-            {x: 620, rise: 118, width: 230},
-            {x: 980, rise: 166, width: 230},
-            {x: 1360, rise: 120, width: 225},
-            {x: 1900, rise: 198, width: 240, style: "lift", move: {axis: "y", distance: 112, speed: 1.1, phase: 0.5}},
-            {x: 2450, rise: 142, width: 245},
-            {x: 2880, rise: 205, width: 235, style: "lift", move: {axis: "x", distance: 160, speed: 0.88, phase: 1.0}},
-            {x: 3340, rise: 158, width: 240},
-            {x: 3730, rise: 124, width: 240},
-            {x: 4320, rise: 138, width: 300}
+            {x: 880, rise: 172, width: 260},
+            {x: 1500, rise: 218, width: 250, style: "lift", move: {axis: "y", distance: 66, speed: 0.88, phase: 0.4}},
+            {x: 2260, rise: 145, width: 270},
+            {x: 3040, rise: 210, width: 255, style: "lift", move: {axis: "x", distance: 110, speed: 0.78, phase: 1.1}},
+            {x: 3820, rise: 178, width: 260},
+            {x: 4360, rise: 126, width: 310}
         ],
         blockers: [
-            {x: 680, rise: 60, width: 104, height: 100, style: "rock"},
-            {x: 1140, rise: 60, width: 94, height: 120, style: "log"},
-            {x: 2320, rise: 60, width: 110, height: 106, style: "rock"},
-            {x: 3180, rise: 60, width: 94, height: 120, style: "log"},
-            {x: 3960, rise: 60, width: 110, height: 106, style: "rock"}
+            {x: 650, rise: 60, width: 96, height: 114, style: "log"},
+            {x: 2660, rise: 60, width: 106, height: 92, style: "rock"},
+            {x: 4100, rise: 60, width: 96, height: 114, style: "log"}
         ],
         hazards: [
-            {x: 980, width: 124, type: "thorn"},
-            {x: 1780, width: 134, type: "thorn"},
-            {x: 2550, width: 142, type: "thorn"},
-            {x: 4100, width: 132, type: "thorn"}
+            {x: 1940, width: 92, type: "thorn"},
+            {x: 3540, width: 98, type: "thorn"}
         ],
         bouncePads: [
-            {x: 1262, width: 120, power: -19.0},
-            {x: 2810, width: 122, power: -19.4}
+            {x: 1280, width: 118, power: -18.6},
+            {x: 2860, width: 118, power: -19.0}
         ],
         collectibles: [
-            {id: "star-1", x: 820, rise: 170},
-            {id: "star-2", x: 1990, rise: 280},
-            {id: "star-3", x: 3520, rise: 228}
+            {id: "star-1", x: 930, rise: 242},
+            {id: "star-2", x: 2320, rise: 212},
+            {id: "star-3", x: 3890, rise: 246}
         ],
         enemySpecs: [
-            {x: 1120, min: 960, max: 1280, speed: 2.3, width: 66, height: 52},
-            {x: 2490, min: 2260, max: 2770, speed: 2.55, width: 66, height: 52},
-            {x: 4050, min: 3840, max: 4400, speed: 2.45, width: 66, height: 52}
+            {x: 1980, min: 1840, max: 2140, speed: 1.78, width: 64, height: 50},
+            {x: 3660, min: 3520, max: 3980, speed: 1.88, width: 64, height: 50}
         ]
     },
     5: {
-        ground: [[0, 780], [860, 1380], [1540, 2140], [2320, 2980], [3180, 3780], [3980, 5000]],
+        // New Zealand grove: alternating safe ground and elevated paths with a calm final approach.
+        ground: [[0, 940], [1140, 2060], [2280, 3160], [3380, 5000]],
         platforms: [
-            {x: 640, rise: 118, width: 230},
-            {x: 1040, rise: 164, width: 230},
-            {x: 1420, rise: 118, width: 225},
-            {x: 1930, rise: 192, width: 245, style: "lift", move: {axis: "y", distance: 105, speed: 1.05, phase: 0.35}},
-            {x: 2460, rise: 142, width: 245},
-            {x: 2900, rise: 202, width: 238, style: "lift", move: {axis: "x", distance: 160, speed: 0.86, phase: 1.1}},
-            {x: 3350, rise: 154, width: 240},
-            {x: 3745, rise: 128, width: 240},
-            {x: 4325, rise: 145, width: 300}
+            {x: 820, rise: 168, width: 260},
+            {x: 1480, rise: 128, width: 260},
+            {x: 1980, rise: 210, width: 250, style: "lift", move: {axis: "y", distance: 58, speed: 0.84, phase: 0.3}},
+            {x: 2760, rise: 156, width: 270},
+            {x: 3560, rise: 210, width: 255, style: "lift", move: {axis: "x", distance: 100, speed: 0.76, phase: 0.9}},
+            {x: 4300, rise: 132, width: 310}
         ],
         blockers: [
-            {x: 690, rise: 60, width: 106, height: 102, style: "rock"},
-            {x: 1185, rise: 60, width: 96, height: 122, style: "log"},
-            {x: 2325, rise: 60, width: 110, height: 106, style: "rock"},
-            {x: 3185, rise: 60, width: 96, height: 122, style: "log"},
-            {x: 3970, rise: 60, width: 112, height: 108, style: "rock"}
+            {x: 610, rise: 60, width: 106, height: 90, style: "rock"},
+            {x: 2480, rise: 60, width: 96, height: 114, style: "log"},
+            {x: 4100, rise: 60, width: 106, height: 90, style: "rock"}
         ],
         hazards: [
-            {x: 970, width: 126, type: "thorn"},
-            {x: 1810, width: 138, type: "thorn"},
-            {x: 2590, width: 142, type: "thorn"},
-            {x: 4115, width: 136, type: "thorn"}
+            {x: 1320, width: 90, type: "thorn"},
+            {x: 3440, width: 96, type: "thorn"}
         ],
         bouncePads: [
-            {x: 1270, width: 120, power: -19.1},
-            {x: 2822, width: 122, power: -19.5}
+            {x: 2320, width: 118, power: -18.8},
+            {x: 2920, width: 118, power: -19.0}
         ],
         collectibles: [
-            {id: "star-1", x: 835, rise: 176},
-            {id: "star-2", x: 2015, rise: 282},
-            {id: "star-3", x: 3540, rise: 232}
+            {id: "star-1", x: 875, rise: 236},
+            {id: "star-2", x: 2825, rise: 224},
+            {id: "star-3", x: 3620, rise: 286}
         ],
         enemySpecs: [
-            {x: 1130, min: 960, max: 1300, speed: 2.35, width: 66, height: 52},
-            {x: 2500, min: 2270, max: 2780, speed: 2.55, width: 66, height: 52},
-            {x: 4060, min: 3840, max: 4420, speed: 2.48, width: 66, height: 52}
+            {x: 1640, min: 1500, max: 1920, speed: 1.62, width: 62, height: 50},
+            {x: 3820, min: 3640, max: 4060, speed: 1.78, width: 62, height: 50}
         ]
     }
 };
-
 function buildLevelGeometry(){
 
     const collectedCollectibleIds = new Set(
@@ -612,7 +576,7 @@ function buildLevelGeometry(){
     }
 
     for(const spec of (layout.hazards || [])){
-        const height = spec.height || Math.max(48, Math.round(spec.width * THORN_IMAGE_RATIO));
+        const height = spec.height || Math.max(34, Math.round(spec.width * THORN_IMAGE_RATIO));
         hazards.push({
             ...spec,
             height,
@@ -636,12 +600,18 @@ function buildLevelGeometry(){
     collectibles = collectibleSpecs.map((spec, index) => {
         const width = spec.width || 58;
         const height = spec.height || 58;
-        const id = spec.id || `star-${index + 1}`;
+        const id = spec.id || `ingredient-${index + 1}`;
+        const cureMeta = CURE_COLLECTIBLES[index % CURE_COLLECTIBLES.length];
+        const type = spec.type || cureMeta.type;
+        const namedMeta = CURE_COLLECTIBLES.find(item => item.type === type) || cureMeta;
         const standingTop = findStandingTop(spec.x, width, true) ?? groundY;
         const y = spec.y ?? (Number.isFinite(Number(spec.rise)) ? groundY - Number(spec.rise) : standingTop - 92);
         return {
             ...spec,
             id,
+            type,
+            name: spec.name || namedMeta.name,
+            shortName: spec.shortName || namedMeta.shortName,
             width,
             height,
             y,
@@ -1079,7 +1049,10 @@ function checkCollectibles(){
         if(hit(player, starHitbox)){
             star.collected = true;
             collectedStars = collectibles.filter(item => item.collected).length;
-            message.innerText = `Star collected! ${collectedStars}/${STAR_TARGET}`;
+            const itemName = star.name || "Cure ingredient";
+            message.innerText = collectedStars >= STAR_TARGET
+                ? `Healing Nectar complete! Deliver it to the hive.`
+                : `${itemName} collected! ${collectedStars}/${STAR_TARGET} cure ingredients`;
             playAudioCue("achievement");
         }
     }
@@ -1089,7 +1062,7 @@ function showMissingStarsHint(){
     const now = performance.now();
     if(now - lastStarHintAt < 900) return;
     lastStarHintAt = now;
-    message.innerText = `Collect all ${STAR_TARGET} stars before entering the hive! You have ${collectedStars}/${STAR_TARGET}.`;
+    message.innerText = `Collect all ${STAR_TARGET} cure ingredients before entering the hive! You have ${collectedStars}/${STAR_TARGET}.`;
     playAudioCue("wrong");
 }
 
@@ -1211,7 +1184,7 @@ function update(){
             player.velY = pad.power;
             player.jumping = true;
             pad.cooldown = 28;
-            playAudioCue("achievement");
+            playAudioCue("bounce");
         }
     }
 
@@ -1221,10 +1194,10 @@ function update(){
 
     for(let hazard of hazards){
         const dangerZone = {
-            x: hazard.x + 14,
-            y: hazard.y + 8,
-            width: Math.max(10, hazard.width - 28),
-            height: Math.max(10, hazard.height - 8)
+            x: hazard.x + Math.max(12, hazard.width * 0.20),
+            y: hazard.y + Math.max(10, hazard.height * 0.34),
+            width: Math.max(10, hazard.width * 0.60),
+            height: Math.max(10, hazard.height * 0.48)
         };
 
         if(hit(player, dangerZone)){
@@ -1333,7 +1306,7 @@ function triggerGameOver(text, cue){
     if(gameOver) return;
     gameOver = true;
     resetCollectiblesAfterDeath();
-    message.innerText = `${text} Stars lost: 0/${STAR_TARGET}.`;
+    message.innerText = `${text} Cure ingredients lost: 0/${STAR_TARGET}.`;
     playAudioCue(cue || "gameover");
 }
 
@@ -1344,7 +1317,7 @@ function finishLevel(){
     markLevelComplete(LEVEL_CONFIG.number);
     playAudioCue("complete");
 
-    message.innerText = `🎉 Level ${LEVEL_CONFIG.number} cleared with ${STAR_TARGET}/${STAR_TARGET} stars! Returning to lobby...`;
+    message.innerText = `🎉 Level ${LEVEL_CONFIG.number} cleared with ${STAR_TARGET}/${STAR_TARGET} cure ingredients! Returning to lobby...`;
 
     clearTimeout(returnToLobbyTimer);
     returnToLobbyTimer = setTimeout(() => {
@@ -1854,7 +1827,155 @@ function drawCollectible(star){
     ctx.beginPath();
     ctx.ellipse(0, star.height * .48, star.width * .34, 7, 0, 0, Math.PI * 2);
     ctx.fill();
-    drawStarShape(0, 0, star.width * .46, star.width * .22, "#ffd166", "#2b2118");
+    drawCureIngredientIcon(star.type || "enzyme-drop", star.width);
+    ctx.restore();
+}
+
+function drawCureIngredientIcon(type, size){
+    if(type === "dna-pollen") drawDnaPollen(size);
+    else if(type === "purification-bead") drawPurificationBead(size);
+    else if(type === "healing-vial") drawHealingVial(size);
+    else drawEnzymeDrop(size);
+}
+
+function drawDnaPollen(size){
+    const r = size * .29;
+    ctx.save();
+    for(let i = 0; i < 10; i++){
+        const angle = i * Math.PI * 2 / 10;
+        const px = Math.cos(angle) * r * 1.02;
+        const py = Math.sin(angle) * r * .92;
+        ctx.fillStyle = "#ffe98a";
+        ctx.strokeStyle = "#2b2118";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(px, py, size * .095, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    ctx.fillStyle = "#ffd166";
+    ctx.strokeStyle = "#2b2118";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r * 1.08, r, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#2a9d8f";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for(let i = 0; i <= 16; i++){
+        const t = i / 16;
+        const y = -r * .62 + t * r * 1.24;
+        const x = Math.sin(t * Math.PI * 2.4) * r * .28;
+        if(i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.strokeStyle = "#fff8d1";
+    ctx.lineWidth = 2;
+    for(let i = 2; i <= 14; i += 3){
+        const t = i / 16;
+        const y = -r * .62 + t * r * 1.24;
+        const x = Math.sin(t * Math.PI * 2.4) * r * .28;
+        ctx.beginPath();
+        ctx.moveTo(x - r * .20, y);
+        ctx.lineTo(x + r * .20, y);
+        ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.beginPath();
+    ctx.arc(-r * .34, -r * .30, r * .18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+}
+
+function drawEnzymeDrop(size){
+    const r = size * .34;
+    ctx.save();
+    ctx.fillStyle = "#7bdff2";
+    ctx.strokeStyle = "#2b2118";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.bezierCurveTo(r * .86, -r * .18, r * .70, r * .92, 0, r * .98);
+    ctx.bezierCurveTo(-r * .70, r * .92, -r * .86, -r * .18, 0, -r);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#57cc99";
+    ctx.strokeStyle = "#2b2118";
+    ctx.lineWidth = 2.5;
+    for(const dot of [[-.22,-.04,.12],[.18,.10,.10],[0,.28,.08]]){
+        ctx.beginPath();
+        ctx.arc(dot[0] * size, dot[1] * size, dot[2] * size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
+    ctx.strokeStyle = "#2b2118";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-size * .10, size * .03);
+    ctx.lineTo(size * .10, size * .11);
+    ctx.lineTo(size * .02, size * .24);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,.62)";
+    ctx.beginPath();
+    ctx.ellipse(-r * .30, -r * .12, r * .16, r * .27, -.35, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+}
+
+function drawPurificationBead(size){
+    const beads = [
+        [-.18, -.18, "#b98bff"], [.18, -.16, "#ffadad"],
+        [-.25, .18, "#ffd166"], [.12, .18, "#57cc99"], [.00, .00, "#f3e8ff"]
+    ];
+    ctx.save();
+    for(const bead of beads){
+        ctx.fillStyle = bead[2];
+        ctx.strokeStyle = "#2b2118";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(bead[0] * size, bead[1] * size, size * .16, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.beginPath();
+        ctx.arc(bead[0] * size - size * .045, bead[1] * size - size * .045, size * .042, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.strokeStyle = "rgba(43,33,24,.55)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-size * .34, size * .34);
+    ctx.lineTo(size * .34, -size * .34);
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawHealingVial(size){
+    const w = size * .46;
+    const h = size * .72;
+    ctx.save();
+    ctx.translate(0, size * .02);
+    ctx.strokeStyle = "#2b2118";
+    ctx.lineWidth = 4;
+    ctx.fillStyle = "#fff8d1";
+    roundedRect(-w / 2, -h / 2, w, h, 6, "#fff8d1");
+    ctx.strokeRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = "#7bdff2";
+    ctx.fillRect(-w / 2 + 5, -h * .02, w - 10, h * .43);
+    ctx.fillStyle = "#ffd166";
+    ctx.fillRect(-w * .32, -h * .65, w * .64, h * .17);
+    ctx.strokeRect(-w * .32, -h * .65, w * .64, h * .17);
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.beginPath();
+    ctx.ellipse(-w * .16, -h * .20, w * .12, h * .18, 0, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
 }
 
@@ -1874,10 +1995,6 @@ function drawStarShape(cx, cy, outerRadius, innerRadius, fillStyle, strokeStyle)
     ctx.lineWidth = 4;
     ctx.strokeStyle = strokeStyle;
     ctx.stroke();
-    ctx.fillStyle = "rgba(255,255,255,.48)";
-    ctx.beginPath();
-    ctx.arc(cx - outerRadius * .22, cy - outerRadius * .20, outerRadius * .13, 0, Math.PI * 2);
-    ctx.fill();
 }
 
 function drawCollectibleHud(){
@@ -1889,7 +2006,10 @@ function drawCollectibleHud(){
     ctx.lineWidth = 4;
     roundedRect(x, y, 188, 54, 12, "rgba(255,248,209,.94)");
     ctx.strokeRect(x, y, 188, 54);
-    drawStarShape(x + 28, y + 27, 18, 8, "#ffd166", "#2b2118");
+    ctx.save();
+    ctx.translate(x + 30, y + 27);
+    drawCureIngredientIcon("healing-vial", 44);
+    ctx.restore();
     ctx.fillStyle = "#2b2118";
     ctx.font = "34px VT323";
     ctx.textAlign = "left";
@@ -1940,7 +2060,7 @@ function drawEnemy(e){
 
     ctx.save();
     ctx.translate(cx, cy);
-    if(e.speed < 0){
+    if(e.speed > 0){
         ctx.scale(-1, 1);
     }
 
@@ -2297,6 +2417,9 @@ window.BeeLevelAccessibilityContext = function(){
         starsCollected: collectedStars,
         starsRequired: STAR_TARGET,
         remainingStars: Math.max(0, STAR_TARGET - collectedStars),
+        cureIngredientsCollected: collectedStars,
+        cureIngredientsRequired: STAR_TARGET,
+        remainingCureIngredients: Math.max(0, STAR_TARGET - collectedStars),
         activeNpc: activeNpc ? {
             name: activeNpc.name || "NPC",
             line: Array.isArray(activeNpc.lines) ? activeNpc.lines[activeNpcLine] || "" : "",

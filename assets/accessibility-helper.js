@@ -128,9 +128,14 @@
     document.body.classList.toggle("bee-a11y-lobby", !isLevelPage() && isLobbyPage());
   }
 
+  function assetPath(fileName){
+    return isLevelPage() ? `../assets/${fileName}` : `assets/${fileName}`;
+  }
+
   function injectStyles(){
     if(document.getElementById("beeA11yStyles")) return;
 
+    const glennSprite = assetPath("glenn-beekeeper-sprite.png");
     const style = document.createElement("style");
     style.id = "beeA11yStyles";
     style.textContent = `
@@ -186,6 +191,14 @@ body.bee-a11y-lobby #beeA11yPanel{ left:28px; right:auto; bottom:198px; }
 }
 #beeA11yHeader h2{ margin:0; font-size:34px; line-height:.92; }
 #beeA11yHeader small{ display:block; margin-top:4px; font-size:18px; line-height:1; opacity:.78; }
+#beeA11yHeader .beeA11yIdentity{ display:flex; align-items:center; gap:12px; }
+#beeA11yGlennAvatar{ width:84px; height:84px; flex:0 0 auto; border:4px solid #2b2118; border-radius:16px; background:url("${glennSprite}") 0 center / 336px auto no-repeat, #fffef3; image-rendering:pixelated; box-shadow:0 4px 0 rgba(0,0,0,.18); animation:glennBlink 4.8s infinite; }
+@keyframes glennBlink{
+  0%, 44%, 100% { background-position: 0 center; }
+  45%, 46% { background-position: -84px center; }
+  47%, 48% { background-position: -168px center; }
+  49%, 50% { background-position: -252px center; }
+}
 #beeA11yClose{
   flex:0 0 auto;
   border:4px solid #2b2118;
@@ -286,17 +299,20 @@ body.bee-a11y-high-contrast #message{ color:#fff !important; text-shadow:3px 3px
     button.type = "button";
     button.setAttribute("aria-controls", "beeA11yPanel");
     button.setAttribute("aria-expanded", "false");
-    button.setAttribute("aria-label", "Open Bee Helper accessibility assistant");
-    button.textContent = "🐝 Help";
+    button.setAttribute("aria-label", "Open Glenn the Beekeeper helper");
+    button.textContent = "🐝 Glenn";
 
     const layer = document.createElement("div");
     layer.id = "beeA11yLayer";
     layer.innerHTML = `
       <section id="beeA11yPanel" role="dialog" aria-modal="false" aria-labelledby="beeA11yTitle">
         <header id="beeA11yHeader">
-          <div>
-            <h2 id="beeA11yTitle">🐝 Bee Helper</h2>
-            <small>scripted accessibility assistant</small>
+          <div class="beeA11yIdentity">
+            <div id="beeA11yGlennAvatar" aria-hidden="true"></div>
+            <div>
+              <h2 id="beeA11yTitle">🐝 Glenn the Beekeeper</h2>
+              <small>scripted bee helper</small>
+            </div>
           </div>
           <button id="beeA11yClose" type="button" aria-label="Close Bee Helper">✕</button>
         </header>
@@ -493,7 +509,7 @@ body.bee-a11y-high-contrast #message{ color:#fff !important; text-shadow:3px 3px
     if(ctx.introActive){
       return `Read the mission card, then press Space or Enter to start.`;
     }
-    return `Move right, collect all 3 stars, talk to the level bee, avoid Zombees and thorn patches, use platforms or bounce mushrooms, and reach the hive.`;
+    return `Move right, collect the 3 cure ingredients, talk to the level bee, avoid Zombees and thorn patches, use platforms or bounce mushrooms, and reach the hive.`;
   }
 
   function runAction(action){
@@ -540,7 +556,7 @@ body.bee-a11y-high-contrast #message{ color:#fff !important; text-shadow:3px 3px
       speak(state.lastAnswerText || stripHtml(buildWelcomeAnswer()));
     }
     else{
-      setAnswer(`<p>I am a small scripted accessibility helper, not a real LLM. I understood your question as: <strong>${escapeHtml(question)}</strong>.</p><p>Try words like <strong>objective</strong>, <strong>what now</strong>, <strong>controls</strong>, <strong>NPC</strong>, <strong>facts</strong>, <strong>weather</strong>, or <strong>simplify</strong>.</p>`, false);
+      setAnswer(`<p>I am <strong>Glenn the Beekeeper</strong>, a small scripted helper rather than a real LLM. I understood your question as: <strong>${escapeHtml(question)}</strong>.</p><p>Try words like <strong>objective</strong>, <strong>what now</strong>, <strong>controls</strong>, <strong>NPC</strong>, <strong>facts</strong>, <strong>weather</strong>, or <strong>simplify</strong>.</p>`, false);
     }
   }
 
@@ -594,7 +610,7 @@ body.bee-a11y-high-contrast #message{ color:#fff !important; text-shadow:3px 3px
     if(ctx.nextHazard){
       parts.push(`<p>Careful: <strong>${escapeHtml(ctx.nextHazard.label || "a hazard")}</strong> is ahead. Jump early or use a platform or bounce mushroom.</p>`);
     }
-    parts.push(`<p>Stars: <strong>${escapeHtml(ctx.starsCollected ?? 0)}/${escapeHtml(ctx.starsRequired ?? 3)}</strong>. Collect all stars before entering the hive.</p>`);
+    parts.push(`<p>Cure ingredients: <strong>${escapeHtml(ctx.cureIngredientsCollected ?? ctx.starsCollected ?? 0)}/${escapeHtml(ctx.cureIngredientsRequired ?? ctx.starsRequired ?? 3)}</strong>. Collect all cure ingredients before entering the hive.</p>`);
     parts.push(`<p>Final target: the <strong>hive</strong> at the end of the route.</p>`);
     setAnswer(parts.join(""), speakNow);
   }
@@ -602,7 +618,7 @@ body.bee-a11y-high-contrast #message{ color:#fff !important; text-shadow:3px 3px
   function answerSimplify(speakNow){
     if(isLevelPage()){
       const ctx = currentLevelContext();
-      setAnswer(`<p><strong>Simpler:</strong> go right. Collect all 3 stars. Jump over gaps and thorn patches. Do not touch ${escapeHtml(ctx.enemyName || "infected bees")}.</p><p>If you see the level bee with <strong>!</strong>, walk into it and press Space or Enter. You win when Flora has all 3 stars and reaches the hive.</p>`, speakNow);
+      setAnswer(`<p><strong>Simpler:</strong> go right. Collect the 3 cure ingredients. Jump over gaps and thorn patches. Do not touch ${escapeHtml(ctx.enemyName || "infected bees")}.</p><p>If you see the level bee with <strong>!</strong>, walk into it and press Space or Enter. You win when Flora has all 3 cure ingredients and reaches the hive.</p>`, speakNow);
       return;
     }
     setAnswer(`<p><strong>Simpler:</strong> click a pin on the globe. If it is gray, it is locked. If it is not gray, press Play.</p><p>Play the levels in order: 1 → 2 → 3 → 4 → 5.</p>`, speakNow);

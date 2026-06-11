@@ -118,23 +118,18 @@
   z-index:705;
   width:168px;
   height:130px;
-  border:4px solid #2b2118;
-  border-radius:13px 18px 18px 13px;
-  background:linear-gradient(90deg, #c87b56 0 18%, #fff1a8 18% 100%);
+  border:0;
+  background:transparent;
   color:#2b2118;
   font-family:"VT323", monospace;
   cursor:pointer;
   padding:0;
-  box-shadow:0 9px 0 rgba(0,0,0,.22), inset -8px 0 0 rgba(255,209,102,.42);
   transform:rotate(-4deg);
   transition:.16s ease;
 }
 #notebookButton:hover{ transform:translateY(-3px) rotate(-2deg) scale(1.03); }
-#notebookButton:active{ transform:translateY(4px) rotate(-2deg); box-shadow:0 4px 0 rgba(0,0,0,.22), inset -8px 0 0 rgba(255,209,102,.42); }
-#notebookButton .notebookRings{ position:absolute; top:12px; left:12px; display:flex; flex-direction:column; gap:8px; }
-#notebookButton .notebookRings span{ display:block; width:20px; height:8px; border:3px solid #2b2118; border-left:0; border-radius:0 999px 999px 0; }
-#notebookButton .notebookBee{ position:absolute; right:22px; top:20px; font-size:38px; }
-#notebookButton .notebookCoverTitle{ position:absolute; left:48px; right:14px; bottom:31px; font-size:36px; line-height:.9; text-align:center; }
+#notebookButton:active{ transform:translateY(4px) rotate(-2deg); }
+#notebookButton .notebookIcon{ position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:contain; image-rendering:pixelated; filter:drop-shadow(0 9px 0 rgba(0,0,0,.22)); }
 #notebookButton .notebookBadge{ position:absolute; right:-15px; top:-18px; min-width:50px; border:4px solid #2b2118; border-radius:999px; background:#57cc99; padding:4px 9px; font-size:24px; box-shadow:0 5px 0 rgba(0,0,0,.18); }
 #notebookOverlay{ position:fixed; inset:0; z-index:9300; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.30); backdrop-filter:blur(4px); font-family:"VT323", monospace; }
 #notebookPanel{ width:min(1020px, calc(100vw - 32px)); height:min(760px, calc(100vh - 32px)); display:grid; grid-template-rows:auto 1fr; overflow:hidden; background:#fff8d1; color:#2b2118; border:6px solid #2b2118; border-radius:20px; box-shadow:0 24px 52px rgba(0,0,0,.38); }
@@ -174,6 +169,7 @@
 .zombeeGuide{ display:grid; grid-template-columns:210px 1fr; gap:22px; align-items:center; margin:8px 0 18px; padding:18px; border:5px solid #2b2118; border-radius:18px; background:#f3e8ff; box-shadow:0 8px 0 rgba(0,0,0,.14); position:relative; }
 .zombeeGuide::before{ content:"📌"; position:absolute; left:15px; top:-20px; font-size:40px; transform:rotate(-12deg); }
 .zombeePhoto{ width:196px; height:170px; object-fit:contain; image-rendering:pixelated; background:#fffbe1; border:5px solid #2b2118; border-radius:12px; box-shadow:6px 6px 0 rgba(142,68,173,.28); }
+.cureIcon{ display:flex; align-items:center; justify-content:center; font-size:82px; line-height:1; }
 .zombeeGuide h4{ margin:0 0 5px; font-size:40px; line-height:.95; color:#6f2dbd; }
 .zombeeGuide p{ margin:0 0 9px; font-size:25px; line-height:1.08; }
 .zombeeBadge{ display:inline-block; border:4px solid #2b2118; border-radius:999px; background:#b98bff; color:#2b2118; padding:4px 13px; font-size:24px; line-height:1; }
@@ -181,8 +177,6 @@
 .zombeeFact{ border:4px solid #2b2118; border-radius:16px; background:rgba(255,255,255,.72); box-shadow:0 6px 0 rgba(0,0,0,.14); padding:14px 16px; font-size:24px; line-height:1.12; }
 @media (max-width:900px){
   #notebookButton{ left:14px; bottom:104px; width:122px; height:94px; }
-  #notebookButton .notebookCoverTitle{ left:34px; right:8px; bottom:21px; font-size:25px; }
-  #notebookButton .notebookBee{ top:12px; right:15px; font-size:28px; }
   #notebookBody{ grid-template-columns:1fr; background:repeating-linear-gradient(0deg, rgba(43,33,24,.045) 0 2px, transparent 2px 38px), #fffbe1; }
   #notebookTabs{ display:flex; gap:10px; border-right:0; border-bottom:5px solid #2b2118; padding:12px; overflow:auto; }
   .notebookPageTab{ min-width:150px; margin-bottom:0; }
@@ -206,9 +200,7 @@
     button.type = "button";
     button.setAttribute("aria-label", "Flora's Notebook");
     button.innerHTML = `
-      <span class="notebookRings" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-      <span class="notebookBee" aria-hidden="true">🐝</span>
-      <span class="notebookCoverTitle">Notebook</span>
+      <img class="notebookIcon" src="assets/notebook.png" alt="">
       <span class="notebookBadge" id="notebookBadge">0/${TOTAL_LEVELS}</span>
     `;
 
@@ -220,7 +212,7 @@
         <header id="notebookHeader">
           <div>
             <h2 id="notebookTitle">Flora's Notebook</h2>
-            <p>Pages and achievements unlock after you clear each level.</p>
+            <p>Pages, cure science, and achievements unlock as you explore.</p>
           </div>
           <button id="closeNotebook" type="button">Close</button>
         </header>
@@ -245,8 +237,8 @@
       const tab = event.target.closest(".notebookPageTab");
       if(!tab) return;
       const page = tab.dataset.page || "level";
-      if(page === "zombee"){
-        selectedPage = "zombee";
+      if(page === "zombee" || page === "cure" || page === "beekeeper"){
+        selectedPage = page;
       }
       else{
         selectedPage = "level";
@@ -301,9 +293,13 @@
     document.getElementById("notebookTabs").innerHTML = renderTabs(completed);
     document.getElementById("notebookPage").innerHTML = selectedPage === "zombee"
       ? renderZombeePage()
-      : completed.has(selectedLevel)
-        ? renderEntry(getNotebookData(selectedLevel))
-        : renderLockedPage(selectedLevel, completedLevels.length === 0);
+      : selectedPage === "cure"
+        ? renderCurePage()
+        : selectedPage === "beekeeper"
+          ? renderBeekeeperPage()
+          : completed.has(selectedLevel)
+            ? renderEntry(getNotebookData(selectedLevel))
+            : renderLockedPage(selectedLevel, completedLevels.length === 0);
   }
 
   function renderTabs(completed){
@@ -312,6 +308,16 @@
         <span class="notebookTabLevel">Zombee</span>
         <span class="notebookTabTitle">Infected bee field note</span>
         <span class="notebookTabStatus">GUIDE</span>
+      </button>
+      <button class="notebookPageTab ${selectedPage === "cure" ? "active" : ""}" type="button" data-page="cure">
+        <span class="notebookTabLevel">Cure Lab</span>
+        <span class="notebookTabTitle">Healing Nectar process</span>
+        <span class="notebookTabStatus">SCIENCE</span>
+      </button>
+      <button class="notebookPageTab ${selectedPage === "beekeeper" ? "active" : ""}" type="button" data-page="beekeeper">
+        <span class="notebookTabLevel">Glenn</span>
+        <span class="notebookTabTitle">Bee keeper guide</span>
+        <span class="notebookTabStatus">FIELD</span>
       </button>
     `;
     for(let level = 1; level <= TOTAL_LEVELS; level++){
@@ -352,6 +358,80 @@
       <div class="notebookSectionTitle">What Flora should remember</div>
       <div class="zombeeFacts">
         ${facts.map((fact, index) => `<article class="zombeeFact"><strong>${index + 1}.</strong> ${escapeHtml(fact)}</article>`).join("") || `<article class="zombeeFact">Avoid infected bees and reach the hive with the cure.</article>`}
+      </div>
+    `;
+  }
+
+  function renderCurePage(){
+    const data = (window.FloraNotebookExtras && window.FloraNotebookExtras.cureProcess) || {
+      title: "Cure Lab: Healing Nectar",
+      name: "Healing Nectar",
+      badge: "Cure workflow",
+      icon: "🧬",
+      summary: "Collect DNA Pollen, Enzyme Drops, and Purification Beads to complete the Healing Nectar.",
+      collectables: [],
+      steps: [],
+      facts: []
+    };
+    const collectables = Array.isArray(data.collectables) ? data.collectables : [];
+    const steps = Array.isArray(data.steps) ? data.steps : [];
+    const facts = Array.isArray(data.facts) ? data.facts : [];
+    return `
+      <h3>${escapeHtml(data.title || "Cure Lab: Healing Nectar")}</h3>
+      <p class="notebookMeta">Flora's cure science chapter · always available</p>
+      <section class="zombeeGuide">
+        <div class="zombeePhoto cureIcon" aria-hidden="true">${escapeHtml(data.icon || "🧪")}</div>
+        <div>
+          <h4>${escapeHtml(data.name || "Healing Nectar")}</h4>
+          <p>${escapeHtml(data.summary || "A simplified science model for the game cure.")}</p>
+          <span class="zombeeBadge">🧪 ${escapeHtml(data.badge || "Cure workflow")}</span>
+        </div>
+      </section>
+      <div class="notebookSectionTitle">What Flora collects</div>
+      <div class="zombeeFacts">
+        ${collectables.map(item => `<article class="zombeeFact"><strong>${escapeHtml(item.name || "Cure ingredient")}</strong> ${escapeHtml(item.role || "Part of the Healing Nectar.")}</article>`).join("") || `<article class="zombeeFact">Collect DNA Pollen, Enzyme Drops, and Purification Beads.</article>`}
+      </div>
+      <div class="notebookSectionTitle">From lab idea to hive mission</div>
+      <div class="zombeeFacts">
+        ${steps.map(step => `<article class="zombeeFact"><strong>${escapeHtml(step.title || "Step")}</strong> ${escapeHtml(step.text || "")}</article>`).join("")}
+      </div>
+      <div class="notebookSectionTitle">Key science ideas</div>
+      <div class="zombeeFacts">
+        ${facts.map((fact, index) => `<article class="zombeeFact"><strong>${index + 1}.</strong> ${escapeHtml(fact)}</article>`).join("")}
+      </div>
+    `;
+  }
+
+  function renderBeekeeperPage(){
+    const data = (window.FloraNotebookExtras && window.FloraNotebookExtras.beekeeper) || {
+      title: "Bee Keeper Guide",
+      name: "Glenn the Beekeeper",
+      image: "assets/glenn-beekeeper.png",
+      badge: "Field guide",
+      summary: "Bee keepers watch colony health, weather, food supply, and disease signs so they can support bees responsibly.",
+      facts: [],
+      foulbrood: []
+    };
+    const facts = Array.isArray(data.facts) ? data.facts : [];
+    const foulbrood = Array.isArray(data.foulbrood) ? data.foulbrood : [];
+    return `
+      <h3>${escapeHtml(data.title || "Bee Keeper Guide")}</h3>
+      <p class="notebookMeta">Flora's field helper chapter · always available</p>
+      <section class="zombeeGuide">
+        <img class="zombeePhoto" src="${escapeHtml(data.image || "assets/glenn-beekeeper.png")}" alt="${escapeHtml(data.name || "Glenn the Beekeeper")}">
+        <div>
+          <h4>${escapeHtml(data.name || "Glenn the Beekeeper")}</h4>
+          <p>${escapeHtml(data.summary || "Bee keepers care for hives across many changing conditions.")}</p>
+          <span class="zombeeBadge">👨‍🌾 ${escapeHtml(data.badge || "Field guide")}</span>
+        </div>
+      </section>
+      <div class="notebookSectionTitle">How bee keepers work in different conditions</div>
+      <div class="zombeeFacts">
+        ${facts.map(item => `<article class="zombeeFact"><strong>${escapeHtml(item.title || "Bee keeper note")}</strong> ${escapeHtml(item.text || "")}</article>`).join("")}
+      </div>
+      <div class="notebookSectionTitle">How Glenn responds to foulbrood risk</div>
+      <div class="zombeeFacts">
+        ${foulbrood.map(item => `<article class="zombeeFact"><strong>${escapeHtml(item.title || "Foulbrood note")}</strong> ${escapeHtml(item.text || "")}</article>`).join("")}
       </div>
     `;
   }

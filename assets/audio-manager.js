@@ -23,7 +23,8 @@
     complete: "level_complete_sfx.ogg",
     achievement: "achievement_sfx.ogg",
     gameover: "game_over_sfx.ogg",
-    wrong: "wrong_choice_sfx.ogg"
+    wrong: "wrong_choice_sfx.ogg",
+    bounce: "floraphonic-bloop-2-186531.mp3"
   };
 
   let settings = loadSettings();

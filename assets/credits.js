@@ -15,7 +15,8 @@
       items: [
         "Lobby music, UI feedback, achievement, level-complete, game-over, and wrong-choice sounds: Cute Adventure Audio Pack by Nativica Music.",
         "Level music: cute & silly rpg music pack by chajamakesmusic.",
-        "Tracks used from chajamakesmusic: blossom, journey, regrowth wip, boss battle, and town."
+        "Tracks used from chajamakesmusic: blossom, journey, regrowth wip, boss battle, and town.",
+        "Bounce mushroom sound effect: Sound Effect by floraphonic from Pixabay."
       ]
     },
     {
@@ -50,7 +51,8 @@
     { label: "Open-Meteo", url: "https://open-meteo.com/" },
     { label: "wttr.in", url: "https://wttr.in/" },
     { label: "three.js", url: "https://threejs.org/" },
-    { label: "VT323 on Google Fonts", url: "https://fonts.google.com/specimen/VT323" }
+    { label: "VT323 on Google Fonts", url: "https://fonts.google.com/specimen/VT323" },
+    { label: "floraphonic on Pixabay", url: "https://pixabay.com/users/floraphonic-38928062/" }
   ];
 
   function ready(fn){

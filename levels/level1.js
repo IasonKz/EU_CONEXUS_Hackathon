@@ -26,7 +26,7 @@ window.LEVEL_CONFIG = {
   },
   "intro": {
     "title": "Mission Start: Athens Hive",
-    "text": "Guide Flora across the meadow. Collect all 3 stars, avoid infected bees and thorn patches, use platforms and bounce mushrooms, talk to the level bee, and reach the hive at the end."
+    "text": "Guide Flora across the meadow. Collect the 3 cure ingredients, avoid infected bees and thorn patches, use platforms and bounce mushrooms, talk to the level bee, and reach the hive at the end."
   },
   "palette": {
     "skyTop": "#8dd7ff",
@@ -63,7 +63,7 @@ window.LEVEL_CONFIG = {
   ],
   "npcs": [
     {
-      "x": 520,
+      "x": 410,
       "name": "Apis Mellifera",
       "accent": "#dcb46b",
       "lines": [
@@ -72,7 +72,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 1650,
+      "x": 2480,
       "name": "Apis Mellifera",
       "accent": "#dcb46b",
       "lines": [
@@ -81,7 +81,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 3260,
+      "x": 4520,
       "name": "Apis Mellifera",
       "accent": "#dcb46b",
       "lines": [

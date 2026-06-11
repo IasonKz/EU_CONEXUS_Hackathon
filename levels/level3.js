@@ -26,7 +26,7 @@ window.LEVEL_CONFIG = {
   },
   "intro": {
     "title": "Carpenter Woods",
-    "text": "This route has logs, thorns, and moving platforms. Collect all 3 stars, meet the carpenter bee, avoid infected bees, and reach the hive."
+    "text": "This route has logs, thorns, and moving platforms. Collect the 3 cure ingredients, meet the carpenter bee, avoid infected bees, and reach the hive."
   },
   "palette": {
     "skyTop": "#a7d9f3",
@@ -63,7 +63,7 @@ window.LEVEL_CONFIG = {
   ],
   "npcs": [
     {
-      "x": 520,
+      "x": 460,
       "name": "Xylocopa",
       "accent": "#b98bff",
       "lines": [
@@ -72,7 +72,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 1510,
+      "x": 2460,
       "name": "Xylocopa",
       "accent": "#b98bff",
       "lines": [
@@ -81,7 +81,7 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 3060,
+      "x": 4540,
       "name": "Xylocopa",
       "accent": "#b98bff",
       "lines": [

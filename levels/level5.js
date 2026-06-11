@@ -24,11 +24,11 @@ window.LEVEL_CONFIG = {
   ],
   "achievement": {
     "title": "Aotearoa Guardian",
-    "text": "Reached the New Zealand hive after collecting all three stars and learning about native solitary bees."
+    "text": "Reached the New Zealand hive after collecting all three cure ingredients and learning about native solitary bees."
   },
   "intro": {
     "title": "Native Grove Mission",
-    "text": "Flora reaches New Zealand. Collect all 3 stars, avoid Zombees and thorn patches, listen to Leioproctus, and bring the cure to the hive."
+    "text": "Flora reaches New Zealand. Collect the 3 cure ingredients, avoid Zombees and thorn patches, listen to Leioproctus, and bring the cure to the hive."
   },
   "palette": {
     "skyTop": "#a7a9d8",
@@ -45,36 +45,36 @@ window.LEVEL_CONFIG = {
     {
       "x": 350,
       "title": "Bee Fact",
-      "text": "New Zealand has native bees as well as introduced honey bees. Many native bees are small, quiet, and easy to miss."
+      "text": "New Zealand has about 28 native bee species as well as introduced honey bees. Many native bees are small, dark, quiet, and easy to miss."
     },
     {
       "x": 1260,
       "title": "Bee Fact",
-      "text": "Many New Zealand native bees are solitary, so a single female may build and care for her own nest instead of living in a large honey-making colony."
+      "text": "Many New Zealand native bees are solitary: one female may dig her own soil nest or use a hollow stem instead of living in a large honey-making colony."
     },
     {
       "x": 2480,
       "title": "Bee Fact",
-      "text": "Native bees often visit native flowers and can be important pollinators in local ecosystems."
+      "text": "Many native bees have short tongues, so they are well suited to small flowers such as mānuka and kānuka, and they can pollinate crops and native plants."
     },
     {
       "x": 3720,
       "title": "Bee Fact",
-      "text": "Protecting wild nesting places, clean soil, and pesticide-free flowers helps native bees survive."
+      "text": "Protecting clean soil, hollow stems, native flowers, and pesticide-free habitat helps native bees survive close to their nests."
     }
   ],
   "npcs": [
     {
-      "x": 520,
+      "x": 470,
       "name": "Leioproctus",
       "accent": "#dbe7ef",
       "lines": [
         "Kia ora, Flora. I am a New Zealand native bee, small but important for local flowers.",
-        "Collect all three stars before the hive. They show that you gathered enough field notes to finish the cure route."
+        "Collect the three cure ingredients before the hive. They show that you gathered enough field notes to finish the cure route."
       ]
     },
     {
-      "x": 1540,
+      "x": 2640,
       "name": "Leioproctus",
       "accent": "#dbe7ef",
       "lines": [
@@ -83,12 +83,12 @@ window.LEVEL_CONFIG = {
       ]
     },
     {
-      "x": 3180,
+      "x": 4540,
       "name": "Leioproctus",
       "accent": "#dbe7ef",
       "lines": [
-        "The last stars are ahead. Watch the moving platform and avoid the thorn patches.",
-        "Reach the hive only after all 3 stars are collected. Then the New Zealand page will unlock in Flora's Notebook."
+        "The last cure ingredients are ahead. Watch the moving platform and avoid the thorn patches.",
+        "Reach the hive only after all 3 cure ingredients are collected. Then the New Zealand page will unlock in Flora's Notebook."
       ]
     }
   ]

@@ -39,6 +39,15 @@ Source: https://chajamakesmusic.itch.io/cute-and-silly-rpg-music-pack
 Asset license listed on itch.io: Creative Commons Attribution 4.0 International.
 License link: https://creativecommons.org/licenses/by/4.0/
 
+### Pixabay sound effect — floraphonic
+
+Used for the bounce mushroom sound effect:
+
+- `floraphonic-bloop-2-186531.mp3`
+
+Credit: Sound Effect by floraphonic from Pixabay.
+Source: https://pixabay.com/users/floraphonic-38928062/
+
 ## Visual assets
 
 Flora, level bees, Zombees, hives, backgrounds, platforms, ground, thorns, rocks, logs, mushrooms, book icon, and UI icons: project-team pixel art / collaborator-supplied assets for this hackathon build.

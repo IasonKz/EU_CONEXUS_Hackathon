@@ -8,3 +8,9 @@ Used for lobby music and SFX.
 Source: https://chajamakesmusic.itch.io/cute-and-silly-rpg-music-pack
 Used for level music: blossom, journey, regrowth wip, boss battle, town.
 License listed on itch.io: Creative Commons Attribution 4.0 International.
+
+
+3) Bounce mushroom sound effect by floraphonic from Pixabay
+File: floraphonic-bloop-2-186531.mp3
+Credit: Sound Effect by floraphonic from Pixabay.
+Source: https://pixabay.com/users/floraphonic-38928062/
