@@ -192,12 +192,10 @@ body.bee-a11y-lobby #beeA11yPanel{ left:28px; right:auto; bottom:198px; }
 #beeA11yHeader h2{ margin:0; font-size:34px; line-height:.92; }
 #beeA11yHeader small{ display:block; margin-top:4px; font-size:18px; line-height:1; opacity:.78; }
 #beeA11yHeader .beeA11yIdentity{ display:flex; align-items:center; gap:12px; }
-#beeA11yGlennAvatar{ width:84px; height:84px; flex:0 0 auto; border:4px solid #2b2118; border-radius:16px; background:url("${glennSprite}") 0 center / 336px auto no-repeat, #fffef3; image-rendering:pixelated; box-shadow:0 4px 0 rgba(0,0,0,.18); animation:glennBlink 4.8s infinite; }
+#beeA11yGlennAvatar{ width:84px; height:84px; flex:0 0 auto; border:4px solid #2b2118; border-radius:16px; background:#f9b939 url("${glennSprite}") 0 center / 336px auto no-repeat; image-rendering:pixelated; box-shadow:0 4px 0 rgba(0,0,0,.18); animation:glennBlink 4.8s steps(1, end) infinite; }
 @keyframes glennBlink{
   0%, 44%, 100% { background-position: 0 center; }
-  45%, 46% { background-position: -84px center; }
-  47%, 48% { background-position: -168px center; }
-  49%, 50% { background-position: -252px center; }
+  45%, 50% { background-position: -168px center; }
 }
 #beeA11yClose{
   flex:0 0 auto;

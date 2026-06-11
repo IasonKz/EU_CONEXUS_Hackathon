@@ -135,9 +135,9 @@ const MUSHROOM_FRAME_RATIO = 292 / (2048 / MUSHROOM_FRAME_COUNT);
 const THORN_IMAGE_RATIO = 0.30;
 const STAR_TARGET = 3;
 const CURE_COLLECTIBLES = [
-    {type: "dna-pollen", name: "DNA Pollen", shortName: "DNA"},
+    {type: "purification-bead", name: "Purification Bead", shortName: "Bead"},
     {type: "enzyme-drop", name: "Enzyme Drop", shortName: "Enzyme"},
-    {type: "purification-bead", name: "Purification Bead", shortName: "Bead"}
+    {type: "dna-pollen", name: "DNA Pollen", shortName: "DNA"}
 ];
 
 let cameraX = 0;
@@ -210,6 +210,48 @@ groundSprite.src = LEVEL_CONFIG.groundImage || "ground.png";
 
 const thornSprite = new Image();
 thornSprite.src = LEVEL_CONFIG.thornImage || "thorn.png";
+
+function loadSprite(src){
+    const image = new Image();
+    image.src = src;
+    return image;
+}
+
+const COLLECTIBLE_SPRITES = {
+    "purification-bead": {
+        sheet: loadSprite("../assets/collectible-1-frames.png"),
+        color: loadSprite("../assets/collectible-1-color.png"),
+        grey: loadSprite("../assets/collectible-1-grey.png"),
+        frames: 4,
+        frameDuration: 150,
+        displayWidth: 78,
+        displayHeight: 86,
+        hudWidth: 54,
+        hudHeight: 58
+    },
+    "enzyme-drop": {
+        sheet: loadSprite("../assets/collectible-2-frames.png"),
+        color: loadSprite("../assets/collectible-2-color.png"),
+        grey: loadSprite("../assets/collectible-2-grey.png"),
+        frames: 4,
+        frameDuration: 150,
+        displayWidth: 68,
+        displayHeight: 78,
+        hudWidth: 48,
+        hudHeight: 58
+    },
+    "dna-pollen": {
+        sheet: loadSprite("../assets/collectible-3-frames.png"),
+        color: loadSprite("../assets/collectible-3-color.png"),
+        grey: loadSprite("../assets/collectible-3-grey.png"),
+        frames: 4,
+        frameDuration: 150,
+        displayWidth: 78,
+        displayHeight: 78,
+        hudWidth: 58,
+        hudHeight: 58
+    }
+};
 
 const animations = {
 
@@ -386,7 +428,9 @@ const LEVEL_LAYOUTS = {
         ],
         blockers: [
             {x: 690, rise: 60, width: 96, height: 84, style: "rock"},
-            {x: 2190, rise: 60, width: 96, height: 112, style: "log"}
+            {x: 1084, rise: 60, width: 96, height: 84, style: "rock"},
+            {x: 2190, rise: 60, width: 96, height: 112, style: "log"},
+            {x: 2824, rise: 60, width: 96, height: 112, style: "log"}
         ],
         hazards: [
             {x: 1180, width: 86, type: "thorn"},
@@ -418,12 +462,13 @@ const LEVEL_LAYOUTS = {
         ],
         blockers: [
             {x: 590, rise: 60, width: 96, height: 86, style: "rock"},
+            {x: 1164, rise: 60, width: 96, height: 86, style: "rock"},
             {x: 2560, rise: 60, width: 98, height: 116, style: "log"},
             {x: 3560, rise: 60, width: 98, height: 88, style: "rock"}
         ],
         hazards: [
             {x: 1260, width: 88, type: "thorn"},
-            {x: 3440, width: 94, type: "thorn"}
+            {x: 3658, width: 94, type: "thorn"}
         ],
         bouncePads: [
             {x: 1760, width: 118, power: -18.6}
@@ -451,11 +496,12 @@ const LEVEL_LAYOUTS = {
         blockers: [
             {x: 1120, rise: 60, width: 96, height: 114, style: "log"},
             {x: 2040, rise: 60, width: 104, height: 90, style: "rock"},
+            {x: 3264, rise: 60, width: 96, height: 90, style: "rock"},
             {x: 3960, rise: 60, width: 96, height: 114, style: "log"}
         ],
         hazards: [
-            {x: 1900, width: 90, type: "thorn"},
-            {x: 3560, width: 96, type: "thorn"}
+            {x: 2144, width: 90, type: "thorn"},
+            {x: 3360, width: 96, type: "thorn"}
         ],
         bouncePads: [
             {x: 1380, width: 118, power: -18.7},
@@ -484,12 +530,13 @@ const LEVEL_LAYOUTS = {
         ],
         blockers: [
             {x: 650, rise: 60, width: 96, height: 114, style: "log"},
+            {x: 1844, rise: 60, width: 96, height: 114, style: "log"},
             {x: 2660, rise: 60, width: 106, height: 92, style: "rock"},
             {x: 4100, rise: 60, width: 96, height: 114, style: "log"}
         ],
         hazards: [
             {x: 1940, width: 92, type: "thorn"},
-            {x: 3540, width: 98, type: "thorn"}
+            {x: 4196, width: 98, type: "thorn"}
         ],
         bouncePads: [
             {x: 1280, width: 118, power: -18.6},
@@ -518,12 +565,14 @@ const LEVEL_LAYOUTS = {
         ],
         blockers: [
             {x: 610, rise: 60, width: 106, height: 90, style: "rock"},
+            {x: 1224, rise: 60, width: 96, height: 90, style: "rock"},
             {x: 2480, rise: 60, width: 96, height: 114, style: "log"},
+            {x: 3394, rise: 60, width: 106, height: 90, style: "rock"},
             {x: 4100, rise: 60, width: 106, height: 90, style: "rock"}
         ],
         hazards: [
             {x: 1320, width: 90, type: "thorn"},
-            {x: 3440, width: 96, type: "thorn"}
+            {x: 3500, width: 96, type: "thorn"}
         ],
         bouncePads: [
             {x: 2320, width: 118, power: -18.8},
@@ -598,22 +647,26 @@ function buildLevelGeometry(){
 
     const collectibleSpecs = layout.collectibles || defaultCollectibles();
     collectibles = collectibleSpecs.map((spec, index) => {
-        const width = spec.width || 58;
-        const height = spec.height || 58;
         const id = spec.id || `ingredient-${index + 1}`;
         const cureMeta = CURE_COLLECTIBLES[index % CURE_COLLECTIBLES.length];
         const type = spec.type || cureMeta.type;
         const namedMeta = CURE_COLLECTIBLES.find(item => item.type === type) || cureMeta;
+        const spriteMeta = COLLECTIBLE_SPRITES[type] || COLLECTIBLE_SPRITES["enzyme-drop"];
+        const width = spec.width || 58;
+        const height = spec.height || 58;
         const standingTop = findStandingTop(spec.x, width, true) ?? groundY;
         const y = spec.y ?? (Number.isFinite(Number(spec.rise)) ? groundY - Number(spec.rise) : standingTop - 92);
         return {
             ...spec,
             id,
             type,
+            ingredientIndex: index,
             name: spec.name || namedMeta.name,
             shortName: spec.shortName || namedMeta.shortName,
             width,
             height,
+            displayWidth: spec.displayWidth || spriteMeta.displayWidth || 72,
+            displayHeight: spec.displayHeight || spriteMeta.displayHeight || 72,
             y,
             collected: collectedCollectibleIds.has(id)
         };
@@ -1811,23 +1864,85 @@ function drawHazard(hazard){
     ctx.restore();
 }
 
+function getCollectibleSprite(type){
+    return COLLECTIBLE_SPRITES[type] || COLLECTIBLE_SPRITES["enzyme-drop"];
+}
+
+function drawCollectibleSpriteFrame(star){
+    const sprite = getCollectibleSprite(star.type);
+    const sheet = sprite.sheet;
+
+    if(!sheet || !sheet.complete || !sheet.naturalWidth){
+        drawCureIngredientIcon(star.type || "enzyme-drop", star.width);
+        return;
+    }
+
+    const frames = Math.max(1, sprite.frames || 1);
+    const frameWidth = Math.floor(sheet.naturalWidth / frames);
+    const frameHeight = sheet.naturalHeight;
+    const phase = (star.ingredientIndex || 0) * .45 + star.x * .002;
+    const frame = Math.floor(performance.now() / (sprite.frameDuration || 150) + phase) % frames;
+    const maxWidth = star.displayWidth || star.width;
+    const maxHeight = star.displayHeight || star.height;
+    const scale = Math.min(maxWidth / frameWidth, maxHeight / frameHeight);
+    const drawWidth = frameWidth * scale;
+    const drawHeight = frameHeight * scale;
+
+    ctx.drawImage(
+        sheet,
+        frame * frameWidth,
+        0,
+        frameWidth,
+        frameHeight,
+        -drawWidth / 2,
+        -drawHeight / 2,
+        drawWidth,
+        drawHeight
+    );
+}
+
+function drawStaticCollectibleIcon(type, collected, x, y, maxWidth, maxHeight){
+    const sprite = getCollectibleSprite(type);
+    const image = collected ? sprite.color : sprite.grey;
+
+    ctx.save();
+    if(image && image.complete && image.naturalWidth){
+        const scale = Math.min(maxWidth / image.naturalWidth, maxHeight / image.naturalHeight);
+        const drawWidth = image.naturalWidth * scale;
+        const drawHeight = image.naturalHeight * scale;
+        ctx.drawImage(
+            image,
+            x + (maxWidth - drawWidth) / 2,
+            y + (maxHeight - drawHeight) / 2,
+            drawWidth,
+            drawHeight
+        );
+    }
+    else{
+        ctx.globalAlpha = collected ? 1 : .42;
+        ctx.translate(x + maxWidth / 2, y + maxHeight / 2);
+        drawCureIngredientIcon(type || "enzyme-drop", Math.min(maxWidth, maxHeight));
+    }
+    ctx.restore();
+}
+
 function drawCollectible(star){
     if(!star || star.collected) return;
     const sx = star.x - cameraX;
-    if(sx < -100 || sx > canvas.width + 100) return;
+    if(sx < -120 || sx > canvas.width + 120) return;
 
-    const pulse = 1 + Math.sin(performance.now() / 220 + star.x * .02) * .08;
+    const pulse = 1 + Math.sin(performance.now() / 420 + star.x * .02) * .035;
     const cx = sx + star.width / 2;
     const cy = star.y + star.height / 2 + Math.sin(performance.now() / 320 + star.x * .01) * 5;
 
     ctx.save();
-    ctx.translate(cx, cy);
-    ctx.scale(pulse, pulse);
     ctx.fillStyle = "rgba(0,0,0,.20)";
     ctx.beginPath();
-    ctx.ellipse(0, star.height * .48, star.width * .34, 7, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy + (star.displayHeight || star.height) * .46, (star.displayWidth || star.width) * .30, 7, 0, 0, Math.PI * 2);
     ctx.fill();
-    drawCureIngredientIcon(star.type || "enzyme-drop", star.width);
+    ctx.translate(cx, cy);
+    ctx.scale(pulse, pulse);
+    drawCollectibleSpriteFrame(star);
     ctx.restore();
 }
 
@@ -1999,22 +2114,39 @@ function drawStarShape(cx, cy, outerRadius, innerRadius, fillStyle, strokeStyle)
 
 function drawCollectibleHud(){
     ctx.save();
-    const x = canvas.width - 208;
-    const y = 22;
-    ctx.fillStyle = "rgba(255,248,209,.94)";
+    const slot = 58;
+    const gap = 10;
+    const panelPaddingX = 10;
+    const panelPaddingY = 8;
+    const x = 18;
+    const y = 84;
+    const panelWidth = STAR_TARGET * slot + (STAR_TARGET - 1) * gap + panelPaddingX * 2;
+    const panelHeight = slot + panelPaddingY * 2;
+
+    ctx.fillStyle = "rgba(255,248,209,.88)";
     ctx.strokeStyle = "#2b2118";
-    ctx.lineWidth = 4;
-    roundedRect(x, y, 188, 54, 12, "rgba(255,248,209,.94)");
-    ctx.strokeRect(x, y, 188, 54);
-    ctx.save();
-    ctx.translate(x + 30, y + 27);
-    drawCureIngredientIcon("healing-vial", 44);
-    ctx.restore();
-    ctx.fillStyle = "#2b2118";
-    ctx.font = "34px VT323";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    ctx.fillText(`${collectedStars}/${STAR_TARGET}`, x + 58, y + 28);
+    ctx.lineWidth = 3;
+    roundedRect(x, y, panelWidth, panelHeight, 13, "rgba(255,248,209,.88)");
+    ctx.strokeRect(x, y, panelWidth, panelHeight);
+
+    for(let index = 0; index < STAR_TARGET; index++){
+        const star = collectibles[index];
+        const meta = CURE_COLLECTIBLES[index % CURE_COLLECTIBLES.length];
+        const type = star?.type || meta.type;
+        const sprite = getCollectibleSprite(type);
+        const iconWidth = sprite.hudWidth || slot;
+        const iconHeight = sprite.hudHeight || slot;
+        const slotX = x + panelPaddingX + index * (slot + gap);
+        const slotY = y + panelPaddingY;
+        drawStaticCollectibleIcon(
+            type,
+            Boolean(star?.collected),
+            slotX + (slot - iconWidth) / 2,
+            slotY + (slot - iconHeight) / 2,
+            iconWidth,
+            iconHeight
+        );
+    }
     ctx.restore();
 }
 

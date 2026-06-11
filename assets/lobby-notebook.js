@@ -169,7 +169,8 @@
 .zombeeGuide{ display:grid; grid-template-columns:210px 1fr; gap:22px; align-items:center; margin:8px 0 18px; padding:18px; border:5px solid #2b2118; border-radius:18px; background:#f3e8ff; box-shadow:0 8px 0 rgba(0,0,0,.14); position:relative; }
 .zombeeGuide::before{ content:"📌"; position:absolute; left:15px; top:-20px; font-size:40px; transform:rotate(-12deg); }
 .zombeePhoto{ width:196px; height:170px; object-fit:contain; image-rendering:pixelated; background:#fffbe1; border:5px solid #2b2118; border-radius:12px; box-shadow:6px 6px 0 rgba(142,68,173,.28); }
-.cureIcon{ display:flex; align-items:center; justify-content:center; font-size:82px; line-height:1; }
+.cureIcon{ display:flex; align-items:center; justify-content:center; font-size:82px; line-height:1; padding:8px; box-sizing:border-box; }
+.cureIconImage{ width:100%; height:100%; object-fit:contain; image-rendering:pixelated; display:block; }
 .zombeeGuide h4{ margin:0 0 5px; font-size:40px; line-height:.95; color:#6f2dbd; }
 .zombeeGuide p{ margin:0 0 9px; font-size:25px; line-height:1.08; }
 .zombeeBadge{ display:inline-block; border:4px solid #2b2118; border-radius:999px; background:#b98bff; color:#2b2118; padding:4px 13px; font-size:24px; line-height:1; }
@@ -376,11 +377,15 @@
     const collectables = Array.isArray(data.collectables) ? data.collectables : [];
     const steps = Array.isArray(data.steps) ? data.steps : [];
     const facts = Array.isArray(data.facts) ? data.facts : [];
+    const cureIconHtml = data.iconImage
+      ? `<img class="cureIconImage" src="${escapeHtml(data.iconImage)}" alt="">`
+      : escapeHtml(data.icon || "🧪");
+
     return `
       <h3>${escapeHtml(data.title || "Cure Lab: Healing Nectar")}</h3>
       <p class="notebookMeta">Flora's cure science chapter · always available</p>
       <section class="zombeeGuide">
-        <div class="zombeePhoto cureIcon" aria-hidden="true">${escapeHtml(data.icon || "🧪")}</div>
+        <div class="zombeePhoto cureIcon" aria-hidden="true">${cureIconHtml}</div>
         <div>
           <h4>${escapeHtml(data.name || "Healing Nectar")}</h4>
           <p>${escapeHtml(data.summary || "A simplified science model for the game cure.")}</p>

@@ -320,6 +320,7 @@ window.FloraNotebookExtras = {
     name: "Healing Nectar",
     badge: "Cure workflow",
     icon: "🧬",
+    iconImage: "assets/collectible-3-color.png",
     summary: "Flora's new collectables turn the cure into a simplified biotechnology story: get the DNA recipe, produce the enzyme, purify it, and deliver it safely to the hive.",
     collectables: [
       {
