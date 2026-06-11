@@ -1,4 +1,4 @@
-<img width="1968" height="1968" alt="716742521_1486359566003721_5177724329924825303_n" src="https://github.com/user-attachments/assets/04e3cece-6503-4d79-9295-c732322c35e3" />
+<img width="800" height="800" alt="716742521_1486359566003721_5177724329924825303_n" src="https://github.com/user-attachments/assets/04e3cece-6503-4d79-9295-c732322c35e3" />
 
 # ApiconIASIS: Bee Wanderer
 
