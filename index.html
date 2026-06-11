@@ -163,6 +163,12 @@
 
       function enterLobby(){
         playSelect();
+        try{
+          sessionStorage.setItem("apiconiasisSkipStartOnce", "1");
+        }
+        catch(error){
+          // If sessionStorage is blocked, the globe page may show the start panel again.
+        }
         window.location.href = "globe_3d_pins.html";
       }
 

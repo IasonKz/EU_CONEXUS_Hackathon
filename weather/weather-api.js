@@ -12,8 +12,8 @@
       bee: "Apis mellifera",
       lat: 37.9838,
       lon: 23.7275,
-      mapLat: 37.9838,
-      mapLon: 23.7275,
+      mapLat: 20.7422,
+      mapLon: 12.9375,
       url: "levels/level1.html"
     },
     {
@@ -24,8 +24,8 @@
       bee: "Meliponini",
       lat: 27.9881,
       lon: 86.9250,
-      mapLat: 27.9881,
-      mapLon: 86.9250,
+      mapLat: 16.8750,
+      mapLon: 74.5312,
       url: "levels/level2.html"
     },
     {
@@ -36,8 +36,8 @@
       bee: "Xylocopa violacea",
       lat: -6.1630,
       lon: 35.7516,
-      mapLat: -6.1630,
-      mapLon: 35.7516,
+      mapLat: -1.2656,
+      mapLon: 26.4375,
       url: "levels/level3.html"
     },
     {
@@ -48,8 +48,8 @@
       bee: "Aloe carpenter bee",
       lat: 0.3476,
       lon: 32.5825,
-      mapLat: 0.3476,
-      mapLon: 32.5825,
+      mapLat: 5.9766,
+      mapLon: 23.2031,
       url: "levels/level4.html"
     },
     {
@@ -60,8 +60,8 @@
       bee: "Leioproctus",
       lat: -41.2865,
       lon: 174.7762,
-      mapLat: -41.2865,
-      mapLon: 174.7762,
+      mapLat: -24.6094,
+      mapLon: 178.5938,
       url: "levels/level5.html"
     }
   ];

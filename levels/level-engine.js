@@ -162,6 +162,22 @@ function playAudioCue(name){
     }
 }
 
+function markLobbyReturn(){
+    try{
+        sessionStorage.setItem("apiconiasisSkipStartOnce", "1");
+    }
+    catch(error){
+        // If sessionStorage is unavailable, the lobby still works; it may show the start panel.
+    }
+}
+
+function returnToLobbyFromLevel(){
+    markLobbyReturn();
+    window.location.href = "../globe_3d_pins.html";
+}
+
+window.returnToLobbyFromLevel = returnToLobbyFromLevel;
+
 function startLevelMusic(){
     if(window.BeeAudio && typeof window.BeeAudio.startMusic === "function"){
         window.BeeAudio.startMusic(LEVEL_CONFIG.musicTrack);
@@ -1378,7 +1394,7 @@ function finishLevel(){
 
     clearTimeout(returnToLobbyTimer);
     returnToLobbyTimer = setTimeout(() => {
-        window.location.href = "../globe_3d_pins.html";
+        returnToLobbyFromLevel();
     }, 950);
 }
 
@@ -2123,7 +2139,7 @@ function drawCollectibleHud(){
     const panelPaddingX = 10;
     const panelPaddingY = 8;
     const x = 18;
-    const y = 84;
+    const y = 18;
     const panelWidth = STAR_TARGET * slot + (STAR_TARGET - 1) * gap + panelPaddingX * 2;
     const panelHeight = slot + panelPaddingY * 2;
 
@@ -2617,7 +2633,7 @@ if(levelLocked){
     message.innerText = `Level ${LEVEL_CONFIG.number} locked — clear Level ${LEVEL_CONFIG.number - 1} first.`;
     draw();
     setTimeout(() => {
-        window.location.href = "../globe_3d_pins.html";
+        returnToLobbyFromLevel();
     }, 1500);
 }
 else{

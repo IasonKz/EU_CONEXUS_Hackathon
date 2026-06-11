@@ -391,6 +391,115 @@
   background:#ffadad !important;
 }
 
+
+
+    #startOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      z-index:12000;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.35) 0 70px, transparent 72px),
+        radial-gradient(circle at 82% 22%, rgba(255,255,255,.28) 0 95px, transparent 98px),
+        linear-gradient(180deg, #a8d8f0 0%, #f6c177 100%);
+      color:#31424a;
+    }
+
+    #startOverlay.active{ display:flex; }
+
+    #startOverlay .startCard{
+      width:min(980px, calc(100vw - 36px));
+      position:relative;
+      background:#f5dcab;
+      border:6px solid #ffe7bd;
+      border-radius:18px;
+      padding:38px 36px 42px;
+      text-align:center;
+      box-shadow:
+        0 0 0 5px rgba(254,109,182,.32),
+        0 24px 48px rgba(43,33,24,.26);
+    }
+
+    #startOverlay .startCard::before,
+    #startOverlay .startCard::after{
+      content:"";
+      position:absolute;
+      width:120px;
+      height:70px;
+      top:-38px;
+      background:#fff8d1;
+      border:5px solid #ffe7bd;
+      border-radius:999px 999px 24px 24px;
+      box-shadow:0 0 0 4px rgba(254,109,182,.16);
+      opacity:.88;
+      z-index:-1;
+    }
+
+    #startOverlay .startCard::before{ left:38px; transform:rotate(-8deg); }
+    #startOverlay .startCard::after{ right:38px; transform:rotate(8deg); }
+
+    #startOverlay h1{
+      margin:0 0 8px;
+      color:white;
+      font-size:clamp(72px, 10vw, 132px);
+      line-height:.78;
+      letter-spacing:.02em;
+      text-shadow:4px 4px 0 #fe6db6;
+    }
+
+    #startOverlay .subtitle{
+      margin:0 0 22px;
+      color:#55602a;
+      font-size:clamp(42px, 6vw, 76px);
+      line-height:.9;
+      text-shadow:2px 2px 0 rgba(255,255,255,.75);
+    }
+
+    #startOverlay .tagline{
+      margin:0 auto 30px;
+      max-width:720px;
+      color:#31424a;
+      font-size:clamp(30px, 3vw, 42px);
+      line-height:1.02;
+    }
+
+    #playStartLobby{
+      border:6px solid #2b2118;
+      border-radius:18px;
+      background:#ffd166;
+      color:#2b2118;
+      font-family:"VT323", monospace;
+      font-size:clamp(46px, 6vw, 72px);
+      line-height:.9;
+      padding:16px 58px 18px;
+      cursor:pointer;
+      box-shadow:0 10px 0 rgba(0,0,0,.20);
+      transition:.16s ease;
+      text-transform:uppercase;
+    }
+
+    #playStartLobby:hover{ transform:translateY(-3px) rotate(-1deg); }
+    #playStartLobby:active{ transform:translateY(6px) rotate(-1deg); box-shadow:0 4px 0 rgba(0,0,0,.20); }
+
+    #startOverlay .hint{
+      margin-top:20px;
+      color:#fe6db6;
+      font-size:28px;
+      line-height:1;
+    }
+
+    #startOverlay .floraPixel{
+      position:absolute;
+      left:28px;
+      bottom:-20px;
+      width:118px;
+      image-rendering:pixelated;
+      filter:drop-shadow(0 10px 0 rgba(0,0,0,.14));
+    }
+
     @media (max-width: 900px){
       #floraPanel{
         left:22px;
@@ -434,6 +543,12 @@
   font-size:32px;
 }
 
+
+
+      #startOverlay .startCard{ padding:34px 22px 36px; }
+      #startOverlay .floraPixel{ width:86px; left:12px; bottom:-16px; opacity:.82; }
+      #startOverlay .hint{ font-size:23px; }
+
       #progressHint{
         top:auto;
         bottom:20px;
@@ -446,6 +561,37 @@
   </style>
 </head>
 <body>
+  <div id="startOverlay" aria-hidden="true">
+    <main class="startCard" aria-labelledby="lobbyStartTitle">
+      <img class="floraPixel" src="assets/flora-main.png" alt="" aria-hidden="true">
+      <h1 id="lobbyStartTitle">ApiconIASIS</h1>
+      <div class="subtitle">Bee Wanderer</div>
+      <p class="tagline">Help Flora start the cure mission and save the bees around the world.</p>
+      <button id="playStartLobby" type="button">PLAY</button>
+      <div class="hint">Press PLAY to enter the globe lobby</div>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      "use strict";
+      const SKIP_KEY = "apiconiasisSkipStartOnce";
+      let skip = false;
+      try{
+        skip = sessionStorage.getItem(SKIP_KEY) === "1";
+        if(skip){ sessionStorage.removeItem(SKIP_KEY); }
+      }
+      catch(error){
+        skip = false;
+      }
+      const overlay = document.getElementById("startOverlay");
+      if(overlay && !skip){
+        overlay.classList.add("active");
+        overlay.setAttribute("aria-hidden", "false");
+      }
+      window.ApiconiasisStartVisible = Boolean(overlay && !skip);
+    })();
+  </script>
   <div id="info">
     <strong>ApiconIASIS: Bee Wanderer</strong>
     Help us save the bees!
@@ -544,6 +690,40 @@
   </div>
 
   <script src="assets/audio-manager.js"></script>
+
+  <script>
+    (function(){
+      "use strict";
+      const overlay = document.getElementById("startOverlay");
+      const button = document.getElementById("playStartLobby");
+
+      function playSelect(){
+        if(window.BeeAudio && typeof window.BeeAudio.play === "function"){
+          window.BeeAudio.play("select");
+        }
+      }
+
+      function hideStartOverlay(){
+        if(!overlay || !overlay.classList.contains("active")) return;
+        playSelect();
+        overlay.classList.remove("active");
+        overlay.setAttribute("aria-hidden", "true");
+        window.ApiconiasisStartVisible = false;
+      }
+
+      if(button){
+        button.addEventListener("click", hideStartOverlay);
+      }
+
+      document.addEventListener("keydown", event => {
+        if(!overlay || !overlay.classList.contains("active")) return;
+        if(event.key === "Enter" || event.code === "Space" || event.key === " "){
+          event.preventDefault();
+          hideStartOverlay();
+        }
+      });
+    })();
+  </script>
   <script src="assets/lobby-settings.js"></script>
   <script src="assets/notebook-data.js"></script>
   <script src="assets/lobby-notebook.js"></script>
@@ -581,11 +761,11 @@
     }
 
     const fallbackLocations = [
-      { number: 1, region: "Athens", title: "Level 1 — Athens Hive", subtitle: "Apis mellifera Meadow", bee: "Apis mellifera", lat: 37.9838, lon: 23.7275, mapLat: 37.9838, mapLon: 23.7275, url: "levels/level1.html" },
-      { number: 2, region: "Himalaya", title: "Level 2 — Himalaya Forest", subtitle: "Meliponini Forest", bee: "Meliponini", lat: 27.9881, lon: 86.9250, mapLat: 27.9881, mapLon: 86.9250, url: "levels/level2.html" },
-      { number: 3, region: "Tanzania", title: "Level 3 — Tanzania Carpenter Woods", subtitle: "Xylocopa Carpenter Woods", bee: "Xylocopa violacea", lat: -6.1630, lon: 35.7516, mapLat: -6.1630, mapLon: 35.7516, url: "levels/level3.html" },
-      { number: 4, region: "Uganda", title: "Level 4 — Uganda Aloe Sanctuary", subtitle: "Aloe Carpenter Sanctuary", bee: "Aloe carpenter bee", lat: 0.3476, lon: 32.5825, mapLat: 0.3476, mapLon: 32.5825, url: "levels/level4.html" },
-      { number: 5, region: "New Zealand", title: "Level 5 — New Zealand Native Grove", subtitle: "Leioproctus Native Grove", bee: "Leioproctus", lat: -41.2865, lon: 174.7762, mapLat: -41.2865, mapLon: 174.7762, url: "levels/level5.html" }
+      { number: 1, region: "Athens", title: "Level 1 — Athens Hive", subtitle: "Apis mellifera Meadow", bee: "Apis mellifera", lat: 37.9838, lon: 23.7275, mapLat: 20.7422, mapLon: 12.9375, url: "levels/level1.html" },
+      { number: 2, region: "Himalaya", title: "Level 2 — Himalaya Forest", subtitle: "Meliponini Forest", bee: "Meliponini", lat: 27.9881, lon: 86.9250, mapLat: 16.8750, mapLon: 74.5312, url: "levels/level2.html" },
+      { number: 3, region: "Tanzania", title: "Level 3 — Tanzania Carpenter Woods", subtitle: "Xylocopa Carpenter Woods", bee: "Xylocopa violacea", lat: -6.1630, lon: 35.7516, mapLat: -1.2656, mapLon: 26.4375, url: "levels/level3.html" },
+      { number: 4, region: "Uganda", title: "Level 4 — Uganda Aloe Sanctuary", subtitle: "Aloe Carpenter Sanctuary", bee: "Aloe carpenter bee", lat: 0.3476, lon: 32.5825, mapLat: 5.9766, mapLon: 23.2031, url: "levels/level4.html" },
+      { number: 5, region: "New Zealand", title: "Level 5 — New Zealand Native Grove", subtitle: "Leioproctus Native Grove", bee: "Leioproctus", lat: -41.2865, lon: 174.7762, mapLat: -24.6094, mapLon: 178.5938, url: "levels/level5.html" }
     ];
 
     const apiLocations = window.BeeWeather ? window.BeeWeather.levelLocations : fallbackLocations;
@@ -597,6 +777,8 @@
         ...location,
         lat: Number(location.mapLat ?? location.lat),
         lon: Number(location.mapLon ?? location.lon),
+        weatherLat: Number(location.lat),
+        weatherLon: Number(location.lon),
         name: location.region,
         level: location.url,
         description: `${location.subtitle}. Bee focus: ${location.bee}.`
@@ -971,7 +1153,11 @@
       }
 
       try{
-        const weather = await window.BeeWeather.getCurrentWeather(pin);
+        const weather = await window.BeeWeather.getCurrentWeather({
+          ...pin,
+          lat: Number.isFinite(Number(pin.weatherLat)) ? Number(pin.weatherLat) : pin.lat,
+          lon: Number.isFinite(Number(pin.weatherLon)) ? Number(pin.weatherLon) : pin.lon
+        });
         pinWeather.innerHTML =
           `<strong>API Weather:</strong> ${escapeHtml(weather.description)} (${escapeHtml(weather.conditionLabel)})<br>` +
           `🌡 ${escapeHtml(window.BeeWeather.formatTemperature(weather.temperature))} · ` +

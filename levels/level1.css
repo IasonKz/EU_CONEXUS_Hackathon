@@ -31,7 +31,8 @@ canvas {
 #lobbyButton {
     position: fixed;
     top: 18px;
-    left: 18px;
+    right: 18px;
+    left: auto;
     z-index: 2200;
     border: 4px solid #2b2118;
     border-radius: 12px;
