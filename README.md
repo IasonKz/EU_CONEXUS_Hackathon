@@ -2,7 +2,9 @@
 
 # ApiconIASIS: Bee Wanderer
 
-A pixel-art educational game prototype made for a competition / hackathon. Flora travels through bee habitats, collects cure ingredients, avoids infected bees, and learns about pollinators.
+A pixel-art educational game prototype made for a competition / hackathon. 
+Flora is an explorer and scientist! Her ultimate mission is to reach the diseased bee hives around the world and help them with the therapy see made. During this process she gains knowledge about all different species of bees which see keeps in her notebook.
+Her friend Glenn is always there to help and advise her throughout her mission! 
 
 ## Play / project links
 
