@@ -12,13 +12,13 @@
   const AUDIO_BASE = window.BEE_AUDIO_BASE || (currentScript ? new URL("audio/", currentScript.src).href : "assets/audio/");
 
   const TRACKS = {
-    lobby: "background_cute_adventure_loop.ogg",
-    music: "background_cute_adventure_loop.ogg",
-    level1: "level1_blossom.wav",
-    level2: "level2_journey.wav",
-    level3: "level3_regrowth_wip.wav",
-    level4: "level4_boss_battle.wav",
-    level5: "level5_town.wav",
+    lobby: "Floramenufinal.wav",
+    music: "Floramenufinal.wav",
+    level1: "Floralevel1loop.wav",
+    level2: "floralvl2final.wav",
+    level3: "Floralvl3final.wav",
+    level4: "floralvl4.wav",
+    level5: "lvl5final.wav",
     select: "option_select_sfx.ogg",
     complete: "level_complete_sfx.ogg",
     achievement: "achievement_sfx.ogg",
