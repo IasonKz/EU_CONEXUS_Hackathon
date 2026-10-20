@@ -9,11 +9,21 @@ AI-assisted implementation support: OpenAI ChatGPT.
 
 ## Music and sound effects
 
+### Original soundtrack — Iris Makridou Theodoridou
+
+All game music was composed for this project by Iris Makridou Theodoridou:
+
+- Menu / globe lobby: `Floramenufinal.wav`
+- Level 1: `Floralevel1loop.wav`
+- Level 2: `floralvl2final.wav`
+- Level 3: `Floralvl3final.wav`
+- Level 4: `floralvl4.wav`
+- Level 5: `lvl5final.wav`
+
 ### Cute Adventure Audio Pack — Nativica Music
 
-Used for the lobby music loop and game sound effects:
+Used for game sound effects:
 
-- `background_cute_adventure_loop.ogg`
 - `option_select_sfx.ogg`
 - `achievement_sfx.ogg`
 - `level_complete_sfx.ogg`
@@ -23,21 +33,6 @@ Used for the lobby music loop and game sound effects:
 Source: https://nativica.itch.io/cute-adventure-audio-pack
 
 The included pack licence says to credit Nativica, and not to resell, redistribute, repackage, claim the assets as your own, or use them in crypto/NFT-related projects.
-
-### cute & silly rpg music pack — chajamakesmusic
-
-Used for level background music:
-
-- Level 1: `blossom`
-- Level 2: `journey`
-- Level 3: `regrowth wip`
-- Level 4: `boss battle`
-- Level 5: `town`
-
-Source: https://chajamakesmusic.itch.io/cute-and-silly-rpg-music-pack
-
-Asset license listed on itch.io: Creative Commons Attribution 4.0 International.
-License link: https://creativecommons.org/licenses/by/4.0/
 
 ### Pixabay sound effect — floraphonic
 

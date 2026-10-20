@@ -13,9 +13,8 @@
     {
       title: "Music & sound effects",
       items: [
-        "Lobby music, UI feedback, achievement, level-complete, game-over, and wrong-choice sounds: Cute Adventure Audio Pack by Nativica Music.",
-        "Level music: cute & silly rpg music pack by chajamakesmusic.",
-        "Tracks used from chajamakesmusic: blossom, journey, regrowth wip, boss battle, and town.",
+        "Original soundtrack (menu and all level music) composed for the game by Iris Makridou Theodoridou.",
+        "UI feedback, achievement, level-complete, game-over, and wrong-choice sounds: Cute Adventure Audio Pack by Nativica Music.",
         "Bounce mushroom sound effect: Sound Effect by floraphonic from Pixabay.",
         "Flora jump sound effect: Sound Effect by freesound_community from Pixabay."
       ]
@@ -47,7 +46,6 @@
 
   const LINKS = [
     { label: "Cute Adventure Audio Pack — Nativica Music", url: "https://nativica.itch.io/cute-adventure-audio-pack" },
-    { label: "cute & silly rpg music pack — chajamakesmusic", url: "https://chajamakesmusic.itch.io/cute-and-silly-rpg-music-pack" },
     { label: "Creative Commons Attribution 4.0 International", url: "https://creativecommons.org/licenses/by/4.0/" },
     { label: "Open-Meteo", url: "https://open-meteo.com/" },
     { label: "wttr.in", url: "https://wttr.in/" },
